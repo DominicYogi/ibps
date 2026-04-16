@@ -1,0 +1,305 @@
+{
+  "profile": {
+    "name": "cvbnm",
+    "dept": "cvbn",
+    "level": "300 Level",
+    "matric": "gfhgjkm,",
+    "income": 34568,
+    "email": "dominicagu791@gmail.com",
+    "updatedAt": "2026-04-03T03:14:48.384Z",
+    "createdAt": "2026-04-03T03:14:48.384Z"
+  },
+  "transactions": [
+    {
+      "id": "8b3ae80d-b4fe-4bb7-a312-d684bcf0388b",
+      "type": "income",
+      "category": "allowance",
+      "amount": 34568,
+      "description": "Monthly Allowance",
+      "date": "2026-04-03",
+      "month": "2026-04",
+      "createdAt": "2026-04-03T03:14:48.431Z"
+    }
+  ],
+  "budgets": {
+    "2026-04": {
+      "total": 34568,
+      "cats": {
+        "feeding": 12099,
+        "transport": 5185,
+        "accommodation": 6914,
+        "books": 3457,
+        "personal": 2765,
+        "fees": 2420,
+        "misc": 1728
+      },
+      "updatedAt": "2026-04-03T03:14:48.409Z"
+    }
+  },
+  "foodPrices": [
+    {
+      "id": "fp1",
+      "category": "breakfast",
+      "name": "Akara & Bread",
+      "price": 300,
+      "unit": "plate",
+      "emoji": "🥖"
+    },
+    {
+      "id": "fp2",
+      "category": "breakfast",
+      "name": "Moi Moi (2 wraps)",
+      "price": 250,
+      "unit": "plate",
+      "emoji": "🟡"
+    },
+    {
+      "id": "fp3",
+      "category": "breakfast",
+      "name": "Fried Egg & Bread",
+      "price": 400,
+      "unit": "plate",
+      "emoji": "🍳"
+    },
+    {
+      "id": "fp4",
+      "category": "breakfast",
+      "name": "Pap (Akamu) & Akara",
+      "price": 300,
+      "unit": "plate",
+      "emoji": "🥣"
+    },
+    {
+      "id": "fp5",
+      "category": "breakfast",
+      "name": "Tea & Bread",
+      "price": 250,
+      "unit": "cup",
+      "emoji": "☕"
+    },
+    {
+      "id": "fp6",
+      "category": "breakfast",
+      "name": "Indomie Noodles (canteen)",
+      "price": 400,
+      "unit": "plate",
+      "emoji": "🍜"
+    },
+    {
+      "id": "fp7",
+      "category": "lunch",
+      "name": "Rice & Stew (small)",
+      "price": 400,
+      "unit": "plate",
+      "emoji": "🍚"
+    },
+    {
+      "id": "fp8",
+      "category": "lunch",
+      "name": "Rice & Stew (big)",
+      "price": 600,
+      "unit": "plate",
+      "emoji": "🍚"
+    },
+    {
+      "id": "fp9",
+      "category": "lunch",
+      "name": "Jollof Rice (small)",
+      "price": 500,
+      "unit": "plate",
+      "emoji": "🍛"
+    },
+    {
+      "id": "fp10",
+      "category": "lunch",
+      "name": "Jollof Rice (big)",
+      "price": 700,
+      "unit": "plate",
+      "emoji": "🍛"
+    },
+    {
+      "id": "fp11",
+      "category": "lunch",
+      "name": "Eba & Egusi Soup",
+      "price": 500,
+      "unit": "plate",
+      "emoji": "🫕"
+    },
+    {
+      "id": "fp12",
+      "category": "lunch",
+      "name": "Eba & Vegetable Soup",
+      "price": 500,
+      "unit": "plate",
+      "emoji": "🫕"
+    },
+    {
+      "id": "fp13",
+      "category": "lunch",
+      "name": "Pounded Yam & Soup",
+      "price": 700,
+      "unit": "plate",
+      "emoji": "🍲"
+    },
+    {
+      "id": "fp14",
+      "category": "lunch",
+      "name": "Beans & Plantain",
+      "price": 450,
+      "unit": "plate",
+      "emoji": "🫘"
+    },
+    {
+      "id": "fp15",
+      "category": "lunch",
+      "name": "Fried Rice & Chicken",
+      "price": 900,
+      "unit": "plate",
+      "emoji": "🍗"
+    },
+    {
+      "id": "fp16",
+      "category": "lunch",
+      "name": "Yam & Egg Sauce",
+      "price": 500,
+      "unit": "plate",
+      "emoji": "🍠"
+    },
+    {
+      "id": "fp17",
+      "category": "dinner",
+      "name": "Rice & Stew (small)",
+      "price": 400,
+      "unit": "plate",
+      "emoji": "🍚"
+    },
+    {
+      "id": "fp18",
+      "category": "dinner",
+      "name": "Eba & Soup",
+      "price": 500,
+      "unit": "plate",
+      "emoji": "🫕"
+    },
+    {
+      "id": "fp19",
+      "category": "dinner",
+      "name": "Spaghetti & Stew",
+      "price": 500,
+      "unit": "plate",
+      "emoji": "🍝"
+    },
+    {
+      "id": "fp20",
+      "category": "dinner",
+      "name": "Beans & Bread",
+      "price": 400,
+      "unit": "plate",
+      "emoji": "🫘"
+    },
+    {
+      "id": "fp21",
+      "category": "dinner",
+      "name": "Yam Porridge",
+      "price": 450,
+      "unit": "plate",
+      "emoji": "🍠"
+    },
+    {
+      "id": "fp22",
+      "category": "snacks",
+      "name": "Gala (sausage roll)",
+      "price": 200,
+      "unit": "piece",
+      "emoji": "🌭"
+    },
+    {
+      "id": "fp23",
+      "category": "snacks",
+      "name": "Chin Chin (small bag)",
+      "price": 100,
+      "unit": "bag",
+      "emoji": "🍪"
+    },
+    {
+      "id": "fp24",
+      "category": "snacks",
+      "name": "Roasted Groundnut",
+      "price": 100,
+      "unit": "wrap",
+      "emoji": "🥜"
+    },
+    {
+      "id": "fp25",
+      "category": "snacks",
+      "name": "Banana (x2)",
+      "price": 150,
+      "unit": "piece",
+      "emoji": "🍌"
+    },
+    {
+      "id": "fp26",
+      "category": "snacks",
+      "name": "Egg Roll",
+      "price": 150,
+      "unit": "piece",
+      "emoji": "🥚"
+    },
+    {
+      "id": "fp27",
+      "category": "snacks",
+      "name": "Fish Pie / Scotch Egg",
+      "price": 200,
+      "unit": "piece",
+      "emoji": "🐟"
+    },
+    {
+      "id": "fp28",
+      "category": "drinks",
+      "name": "Pure Water (sachet)",
+      "price": 20,
+      "unit": "sachet",
+      "emoji": "💧"
+    },
+    {
+      "id": "fp29",
+      "category": "drinks",
+      "name": "Bottled Water (50cl)",
+      "price": 150,
+      "unit": "bottle",
+      "emoji": "🍶"
+    },
+    {
+      "id": "fp30",
+      "category": "drinks",
+      "name": "Zobo (cup)",
+      "price": 100,
+      "unit": "cup",
+      "emoji": "🥤"
+    },
+    {
+      "id": "fp31",
+      "category": "drinks",
+      "name": "Soft Drink (35cl can)",
+      "price": 300,
+      "unit": "can",
+      "emoji": "🥤"
+    },
+    {
+      "id": "fp32",
+      "category": "drinks",
+      "name": "Kunu (cup)",
+      "price": 100,
+      "unit": "cup",
+      "emoji": "🥛"
+    },
+    {
+      "id": "fp33",
+      "category": "drinks",
+      "name": "Chapman / Juice (bottle)",
+      "price": 400,
+      "unit": "bottle",
+      "emoji": "🧃"
+    }
+  ]
+}

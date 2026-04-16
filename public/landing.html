@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>IBEPS — Intelligent Budgeting & Expense Prediction System</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/styles.css" />
+  <style>
+    /* ── Landing-specific overrides ── */
+    body { overflow-x: hidden; }
+
+    /* Navbar */
+    .land-nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 18px 48px;
+      background: rgba(240,244,255,0.7);
+      backdrop-filter: blur(20px) saturate(180%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
+      border-bottom: 1px solid rgba(255,255,255,0.6);
+      transition: all 0.3s ease;
+    }
+    .land-nav.scrolled {
+      padding: 12px 48px;
+      background: rgba(240,244,255,0.9);
+      box-shadow: 0 4px 24px rgba(139,92,246,0.1);
+    }
+    .land-logo { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+    .land-logo-icon {
+      width: 42px; height: 42px; border-radius: 13px;
+      background: linear-gradient(135deg, #FF6EB4, #c026d3);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px;
+      box-shadow: 0 4px 16px rgba(255,110,180,0.35);
+    }
+    .land-logo-text {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 1.2rem; font-weight: 800; letter-spacing: -0.03em;
+      background: linear-gradient(135deg, #FF6EB4, #A78BFA);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .land-logo-sub { font-size: 0.6rem; color: #9CA3AF; letter-spacing: 0.08em; text-transform: uppercase; margin-top: 1px; }
+    .nav-links { display: flex; align-items: center; gap: 32px; }
+    .nav-link {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 0.85rem; font-weight: 500; color: #6B7280;
+      text-decoration: none; transition: color 0.2s;
+    }
+    .nav-link:hover { color: #FF6EB4; }
+    .nav-cta { display: flex; gap: 10px; align-items: center; }
+
+    /* Hero */
+    .hero {
+      min-height: 100vh;
+      display: flex; align-items: center; justify-content: center;
+      padding: 120px 48px 80px;
+      position: relative;
+    }
+    .hero-inner {
+      max-width: 1100px; width: 100%;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center;
+    }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 7px;
+      background: rgba(255,110,180,0.12); border: 1px solid rgba(255,110,180,0.25);
+      border-radius: 100px; padding: 6px 14px; margin-bottom: 20px;
+      font-size: 0.75rem; font-weight: 600; color: #FF6EB4;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    .hero-badge .dot { width: 6px; height: 6px; border-radius: 50%; background: #FF6EB4; animation: pulse 2s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.6;transform:scale(0.8)} }
+    .hero-title {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: clamp(2.2rem, 4vw, 3.4rem);
+      font-weight: 800; line-height: 1.1; letter-spacing: -0.04em;
+      color: #1E1B4B; margin-bottom: 22px;
+    }
+    .hero-title .grad {
+      background: linear-gradient(135deg, #FF6EB4 0%, #A78BFA 50%, #5EC4D4 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .hero-sub {
+      font-size: 1.05rem; color: #6B7280; line-height: 1.7; margin-bottom: 36px;
+      font-family: 'DM Sans', sans-serif;
+    }
+    .hero-actions { display: flex; gap: 14px; flex-wrap: wrap; }
+    .hero-stats {
+      display: flex; gap: 28px; margin-top: 44px; padding-top: 32px;
+      border-top: 1px solid rgba(255,255,255,0.6);
+    }
+    .hero-stat-val {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 1.6rem; font-weight: 800; letter-spacing: -0.04em; color: #1E1B4B;
+    }
+    .hero-stat-label { font-size: 0.75rem; color: #9CA3AF; margin-top: 2px; }
+
+    /* Hero visual */
+    .hero-visual { position: relative; }
+    .hero-card {
+      background: rgba(255,255,255,0.55);
+      backdrop-filter: blur(20px) saturate(180%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
+      border: 1px solid rgba(255,255,255,0.65);
+      box-shadow: 0 20px 60px rgba(139,92,246,0.18), 0 4px 16px rgba(0,0,0,0.08);
+      border-radius: 24px; padding: 28px;
+      animation: floatCard 6s ease-in-out infinite;
+    }
+    @keyframes floatCard { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
+    .hc-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
+    .hc-title { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; color: #1E1B4B; font-size: 0.95rem; }
+    .hc-badge {
+      background: rgba(52,211,153,0.15); color: #34D399; border: 1px solid rgba(52,211,153,0.3);
+      border-radius: 100px; padding: 3px 10px; font-size: 0.7rem; font-weight: 600;
+    }
+    .hc-balance { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 2.4rem; font-weight: 800; letter-spacing: -0.04em; color: #1E1B4B; }
+    .hc-balance-sub { font-size: 0.78rem; color: #9CA3AF; margin-top: 4px; }
+    .hc-bars { margin-top: 24px; display: flex; flex-direction: column; gap: 14px; }
+    .hc-bar-label { display: flex; justify-content: space-between; font-size: 0.78rem; margin-bottom: 6px; }
+    .hc-bar-name { color: #6B7280; font-weight: 500; }
+    .hc-bar-val { color: #1E1B4B; font-weight: 600; }
+    .hc-bar-track { height: 7px; border-radius: 100px; background: rgba(139,92,246,0.08); overflow: hidden; }
+    .hc-bar-fill { height: 100%; border-radius: 100px; transition: width 1.5s cubic-bezier(.4,0,.2,1); }
+    .hc-bar-fill.pink { background: linear-gradient(90deg, #FF6EB4, #e040a0); }
+    .hc-bar-fill.teal { background: linear-gradient(90deg, #5EC4D4, #06b6d4); }
+    .hc-bar-fill.purple { background: linear-gradient(90deg, #A78BFA, #7c3aed); }
+
+    .float-chip {
+      position: absolute;
+      background: rgba(255,255,255,0.8);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(255,255,255,0.8);
+      border-radius: 14px; padding: 12px 16px;
+      box-shadow: 0 8px 32px rgba(139,92,246,0.15);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      animation: chipBob 4s ease-in-out infinite;
+    }
+    .float-chip-1 { top: -20px; right: -20px; animation-delay: 1s; }
+    .float-chip-2 { bottom: 20px; left: -30px; animation-delay: 2.5s; }
+    @keyframes chipBob { 0%,100%{transform:translateY(0) rotate(-2deg)} 50%{transform:translateY(-8px) rotate(2deg)} }
+    .chip-emoji { font-size: 1.4rem; margin-bottom: 4px; }
+    .chip-val { font-size: 1rem; font-weight: 800; color: #1E1B4B; letter-spacing: -0.03em; }
+    .chip-label { font-size: 0.65rem; color: #9CA3AF; text-transform: uppercase; letter-spacing: 0.08em; }
+
+    /* Section layout */
+    .section {
+      padding: 80px 48px;
+      max-width: 1100px; margin: 0 auto;
+    }
+    .section-label {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 0.72rem; font-weight: 700; color: #FF6EB4;
+      text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: 12px;
+    }
+    .section-title {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: clamp(1.8rem, 3vw, 2.6rem); font-weight: 800;
+      letter-spacing: -0.04em; color: #1E1B4B; margin-bottom: 16px;
+    }
+    .section-sub { font-size: 1rem; color: #6B7280; line-height: 1.7; max-width: 560px; font-family: 'DM Sans', sans-serif; }
+
+    /* Features */
+    .features-wrap { padding: 0 48px 80px; }
+    .features-grid {
+      max-width: 1100px; margin: 0 auto;
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;
+    }
+    .feat-card {
+      background: rgba(255,255,255,0.55);
+      backdrop-filter: blur(20px) saturate(180%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
+      border: 1px solid rgba(255,255,255,0.65);
+      box-shadow: 0 8px 32px rgba(139,92,246,0.1);
+      border-radius: 20px; padding: 28px;
+      transition: all 0.25s cubic-bezier(.4,0,.2,1);
+    }
+    .feat-card:hover { transform: translateY(-4px); box-shadow: 0 20px 60px rgba(139,92,246,0.18); }
+    .feat-icon {
+      width: 46px; height: 46px; border-radius: 14px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.4rem; margin-bottom: 16px;
+    }
+    .feat-icon.pink  { background: rgba(255,110,180,0.12); }
+    .feat-icon.teal  { background: rgba(94,196,212,0.12); }
+    .feat-icon.purple{ background: rgba(167,139,250,0.12); }
+    .feat-icon.green { background: rgba(52,211,153,0.12); }
+    .feat-icon.gold  { background: rgba(251,191,36,0.12); }
+    .feat-icon.red   { background: rgba(248,113,113,0.12); }
+    .feat-name {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 1rem; font-weight: 700; color: #1E1B4B; margin-bottom: 8px;
+    }
+    .feat-desc { font-size: 0.85rem; color: #6B7280; line-height: 1.6; font-family: 'DM Sans', sans-serif; }
+
+    /* How it works */
+    .steps-wrap { padding: 0 48px 80px; }
+    .steps-grid {
+      max-width: 1100px; margin: 48px auto 0;
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px;
+    }
+    .step-card {
+      background: rgba(255,255,255,0.4);
+      border: 1px solid rgba(255,255,255,0.6);
+      border-radius: 20px; padding: 28px 22px;
+      text-align: center;
+      transition: all 0.25s ease;
+    }
+    .step-card:hover { background: rgba(255,255,255,0.65); transform: translateY(-3px); }
+    .step-num {
+      width: 42px; height: 42px; border-radius: 50%; margin: 0 auto 16px;
+      background: linear-gradient(135deg, #FF6EB4, #A78BFA);
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; color: #fff;
+      font-size: 0.9rem; box-shadow: 0 4px 14px rgba(255,110,180,0.35);
+    }
+    .step-title {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-weight: 700; font-size: 0.95rem; color: #1E1B4B; margin-bottom: 8px;
+    }
+    .step-desc { font-size: 0.82rem; color: #6B7280; line-height: 1.6; font-family: 'DM Sans', sans-serif; }
+
+    /* CTA section */
+    .cta-wrap {
+      padding: 0 48px 100px;
+    }
+    .cta-card {
+      max-width: 1100px; margin: 0 auto;
+      background: linear-gradient(135deg, rgba(255,110,180,0.1) 0%, rgba(167,139,250,0.15) 50%, rgba(94,196,212,0.1) 100%);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255,255,255,0.6);
+      border-radius: 28px; padding: 64px;
+      text-align: center;
+      box-shadow: 0 20px 60px rgba(139,92,246,0.15);
+    }
+    .cta-emoji { font-size: 3.2rem; margin-bottom: 16px; }
+    .cta-title {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: clamp(1.8rem, 3vw, 2.6rem); font-weight: 800; letter-spacing: -0.04em;
+      color: #1E1B4B; margin-bottom: 14px;
+    }
+    .cta-sub { font-size: 1rem; color: #6B7280; margin-bottom: 36px; font-family: 'DM Sans', sans-serif; }
+    .cta-actions { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+
+    /* Footer */
+    footer {
+      border-top: 1px solid rgba(255,255,255,0.5);
+      padding: 28px 48px;
+      display: flex; align-items: center; justify-content: space-between;
+      max-width: 1100px; margin: 0 auto;
+    }
+    .footer-copy { font-size: 0.8rem; color: #9CA3AF; font-family: 'DM Sans', sans-serif; }
+    .footer-links { display: flex; gap: 24px; }
+    .footer-link { font-size: 0.8rem; color: #9CA3AF; text-decoration: none; transition: color 0.2s; }
+    .footer-link:hover { color: #FF6EB4; }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      .land-nav { padding: 16px 24px; }
+      .hero { padding: 100px 24px 60px; }
+      .hero-inner { grid-template-columns: 1fr; }
+      .hero-visual { display: none; }
+      .features-grid { grid-template-columns: repeat(2, 1fr); padding: 0 24px; }
+      .features-wrap { padding: 0 24px 60px; }
+      .steps-grid { grid-template-columns: repeat(2, 1fr); }
+      .steps-wrap { padding: 0 24px 60px; }
+      .section { padding: 60px 24px; }
+      .cta-wrap { padding: 0 24px 60px; }
+      .cta-card { padding: 40px 28px; }
+      .nav-links { display: none; }
+      footer { padding: 24px; flex-direction: column; gap: 12px; text-align: center; }
+    }
+    @media (max-width: 560px) {
+      .features-grid { grid-template-columns: 1fr; }
+      .steps-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="land-nav" id="landNav">
+    <a href="/" class="land-logo">
+      <div class="land-logo-icon">💡</div>
+      <div>
+        <div class="land-logo-text"><span>IB</span>EPS</div>
+        <div class="land-logo-sub">Salem University</div>
+      </div>
+    </a>
+    <div class="nav-links">
+      <a href="#features" class="nav-link">Features</a>
+      <a href="#how-it-works" class="nav-link">How It Works</a>
+    </div>
+    <div class="nav-cta">
+      <a href="/login.html" class="btn btn-ghost btn-sm">Log In</a>
+      <a href="/register.html" class="btn btn-accent btn-sm">Get Started →</a>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-inner">
+      <div class="hero-content">
+        <div class="hero-badge"><span class="dot"></span> Built for Salem University Students</div>
+        <h1 class="hero-title">
+          Budget smarter,<br>
+          spend <span class="grad">wiser</span>,<br>
+          stress less.
+        </h1>
+        <p class="hero-sub">
+          IBEPS is your AI-powered financial companion that tracks spending, predicts expenses, and gives you personalised advice — so your money works as hard as you do.
+        </p>
+        <div class="hero-actions">
+          <a href="/register.html" class="btn btn-accent">Create Free Account 🚀</a>
+          <a href="/login.html" class="btn btn-ghost">I have an account</a>
+        </div>
+        <div class="hero-stats">
+          <div>
+            <div class="hero-stat-val">₦0</div>
+            <div class="hero-stat-label">Hidden fees ever</div>
+          </div>
+          <div>
+            <div class="hero-stat-val">AI</div>
+            <div class="hero-stat-label">Powered insights</div>
+          </div>
+          <div>
+            <div class="hero-stat-val">24/7</div>
+            <div class="hero-stat-label">Smart tracking</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-visual">
+        <div class="hero-card">
+          <div class="hc-header">
+            <div class="hc-title">📊 Monthly Overview</div>
+            <div class="hc-badge">↑ On Track</div>
+          </div>
+          <div class="hc-balance">₦28,500</div>
+          <div class="hc-balance-sub">Remaining balance · April 2026</div>
+          <div class="hc-bars">
+            <div>
+              <div class="hc-bar-label">
+                <span class="hc-bar-name">🍔 Food</span>
+                <span class="hc-bar-val">₦6,200 / ₦9,000</span>
+              </div>
+              <div class="hc-bar-track"><div class="hc-bar-fill pink" style="width:69%"></div></div>
+            </div>
+            <div>
+              <div class="hc-bar-label">
+                <span class="hc-bar-name">📚 Academic</span>
+                <span class="hc-bar-val">₦3,000 / ₦5,000</span>
+              </div>
+              <div class="hc-bar-track"><div class="hc-bar-fill teal" style="width:60%"></div></div>
+            </div>
+            <div>
+              <div class="hc-bar-label">
+                <span class="hc-bar-name">🚌 Transport</span>
+                <span class="hc-bar-val">₦1,800 / ₦3,500</span>
+              </div>
+              <div class="hc-bar-track"><div class="hc-bar-fill purple" style="width:51%"></div></div>
+            </div>
+          </div>
+        </div>
+        <div class="float-chip float-chip-1">
+          <div class="chip-emoji">🔮</div>
+          <div class="chip-val">AI Predict</div>
+          <div class="chip-label">Next month</div>
+        </div>
+        <div class="float-chip float-chip-2">
+          <div class="chip-emoji">🏆</div>
+          <div class="chip-val">Score 84</div>
+          <div class="chip-label">Financial health</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features -->
+  <section id="features">
+    <div class="section">
+      <div class="section-label">Everything you need</div>
+      <h2 class="section-title">Powerful features,<br>zero complexity.</h2>
+      <p class="section-sub">Every tool a student needs to take full control of their finances — all in one beautiful dashboard.</p>
+    </div>
+    <div class="features-wrap">
+      <div class="features-grid">
+        <div class="feat-card">
+          <div class="feat-icon pink">📊</div>
+          <div class="feat-name">Smart Dashboard</div>
+          <div class="feat-desc">Get a real-time snapshot of your balance, income, and spending trends at a glance.</div>
+        </div>
+        <div class="feat-card">
+          <div class="feat-icon teal">💸</div>
+          <div class="feat-name">Transaction Tracker</div>
+          <div class="feat-desc">Log income and expenses by category. Instantly see where every naira goes.</div>
+        </div>
+        <div class="feat-card">
+          <div class="feat-icon purple">🗂️</div>
+          <div class="feat-name">Budget Setup</div>
+          <div class="feat-desc">Set monthly budget limits per category. Get warned before you overspend.</div>
+        </div>
+        <div class="feat-card">
+          <div class="feat-icon green">🔮</div>
+          <div class="feat-name">AI Predictions</div>
+          <div class="feat-desc">Our AI analyses your spending patterns and predicts what you'll spend next month.</div>
+        </div>
+        <div class="feat-card">
+          <div class="feat-icon gold">🧠</div>
+          <div class="feat-name">Smart Advice</div>
+          <div class="feat-desc">Receive personalised financial tips based on your unique spending behaviour.</div>
+        </div>
+        <div class="feat-card">
+          <div class="feat-icon red">🍽️</div>
+          <div class="feat-name">Food Price Index</div>
+          <div class="feat-desc">Live prices for food around campus so you always know the best-value meal options.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How it works -->
+  <section id="how-it-works">
+    <div class="steps-wrap">
+      <div style="max-width:1100px; margin:0 auto;">
+        <div class="section-label">How it works</div>
+        <h2 class="section-title">Up and running in minutes.</h2>
+      </div>
+      <div class="steps-grid">
+        <div class="step-card">
+          <div class="step-num">1</div>
+          <div class="step-title">Create Account</div>
+          <div class="step-desc">Sign up with your matric number and Salem University email in seconds.</div>
+        </div>
+        <div class="step-card">
+          <div class="step-num">2</div>
+          <div class="step-title">Set Your Budget</div>
+          <div class="step-desc">Enter your monthly allowance and assign spending limits per category.</div>
+        </div>
+        <div class="step-card">
+          <div class="step-num">3</div>
+          <div class="step-title">Track Spending</div>
+          <div class="step-desc">Log transactions as you spend. The AI learns your habits over time.</div>
+        </div>
+        <div class="step-card">
+          <div class="step-num">4</div>
+          <div class="step-title">Get Smarter</div>
+          <div class="step-desc">Receive predictions, advice, and monthly reports to continuously improve.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <div class="cta-wrap">
+    <div class="cta-card">
+      <div class="cta-emoji">💡</div>
+      <h2 class="cta-title">Ready to take control<br>of your finances?</h2>
+      <p class="cta-sub">Join students who are already budgeting smarter with IBEPS.<br>Free forever — no credit card needed.</p>
+      <div class="cta-actions">
+        <a href="/register.html" class="btn btn-accent">Create Free Account 🚀</a>
+        <a href="/login.html" class="btn btn-ghost">Log In</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-copy">© 2026 IBEPS · Salem University · Built with 💡</div>
+    <div class="footer-links">
+      <a href="#" class="footer-link">Privacy</a>
+      <a href="#" class="footer-link">Terms</a>
+      <a href="#" class="footer-link">Support</a>
+    </div>
+  </footer>
+
+  <script>
+    // Navbar scroll effect
+    window.addEventListener('scroll', () => {
+      document.getElementById('landNav').classList.toggle('scrolled', window.scrollY > 40);
+    });
+
+    // Smooth scroll for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(a => {
+      a.addEventListener('click', e => {
+        const el = document.querySelector(a.getAttribute('href'));
+        if (el) { e.preventDefault(); el.scrollIntoView({ behavior: 'smooth' }); }
+      });
+    });
+
+    // Redirect to app if already logged in
+    const token = localStorage.getItem('ibeps_token');
+    if (token) window.location.href = '/index.html';
+  </script>
+</body>
+</html>

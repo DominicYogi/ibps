@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Log In — IBEPS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/styles.css" />
+  <style>
+    .auth-page {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    .auth-wrap {
+      width: 100%;
+      max-width: 420px;
+    }
+    .auth-logo {
+      display: flex; align-items: center; gap: 12px;
+      justify-content: center; margin-bottom: 36px;
+      text-decoration: none;
+    }
+    .auth-logo-icon {
+      width: 44px; height: 44px; border-radius: 14px;
+      background: linear-gradient(135deg, #FF6EB4, #c026d3);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px;
+      box-shadow: 0 4px 18px rgba(255,110,180,0.38);
+    }
+    .auth-logo-text {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 1.3rem; font-weight: 800; letter-spacing: -0.04em;
+      background: linear-gradient(135deg, #FF6EB4, #A78BFA);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .auth-logo-sub { font-size: 0.62rem; color: #9CA3AF; text-transform: uppercase; letter-spacing: 0.08em; }
+    .auth-card {
+      background: rgba(255,255,255,0.65);
+      backdrop-filter: blur(28px) saturate(200%);
+      -webkit-backdrop-filter: blur(28px) saturate(200%);
+      border: 1px solid rgba(255,255,255,0.75);
+      box-shadow: 0 20px 60px rgba(139,92,246,0.18), 0 4px 16px rgba(0,0,0,0.06);
+      border-radius: 24px;
+      padding: 36px 32px;
+    }
+    .auth-heading {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 1.6rem; font-weight: 800; letter-spacing: -0.04em;
+      color: #1E1B4B; margin-bottom: 6px;
+    }
+    .auth-sub { color: #6B7280; font-size: 0.88rem; margin-bottom: 28px; font-family: 'DM Sans', sans-serif; }
+    .auth-form { display: flex; flex-direction: column; gap: 18px; }
+    .auth-label {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 0.78rem; font-weight: 600; color: #1E1B4B;
+      margin-bottom: 6px; display: block;
+    }
+    .auth-input-wrap { position: relative; }
+    .auth-input-icon {
+      position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
+      font-size: 1rem; pointer-events: none;
+    }
+    .auth-input {
+      width: 100%; padding: 11px 14px 11px 40px;
+      background: rgba(255,255,255,0.7);
+      border: 1.5px solid rgba(255,255,255,0.8);
+      border-radius: 12px; outline: none;
+      font-family: 'DM Sans', sans-serif; font-size: 0.9rem;
+      color: #1E1B4B; transition: all 0.22s;
+    }
+    .auth-input:focus {
+      border-color: #FF6EB4;
+      box-shadow: 0 0 0 3px rgba(255,110,180,0.15);
+      background: rgba(255,255,255,0.9);
+    }
+    .auth-input::placeholder { color: #9CA3AF; }
+    .pw-toggle {
+      position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+      background: none; border: none; cursor: pointer; color: #9CA3AF;
+      font-size: 1rem; padding: 4px; transition: color 0.2s;
+    }
+    .pw-toggle:hover { color: #FF6EB4; }
+    .auth-error {
+      background: rgba(248,113,113,0.1); border: 1px solid rgba(248,113,113,0.3);
+      color: #F87171; border-radius: 10px; padding: 10px 14px;
+      font-size: 0.82rem; font-family: 'DM Sans', sans-serif; display: none;
+    }
+    .auth-error.show { display: block; }
+    .auth-success {
+      background: rgba(52,211,153,0.1); border: 1px solid rgba(52,211,153,0.3);
+      color: #34D399; border-radius: 10px; padding: 10px 14px;
+      font-size: 0.82rem; font-family: 'DM Sans', sans-serif; display: none;
+    }
+    .auth-success.show { display: block; }
+    .auth-btn {
+      width: 100%; padding: 13px;
+      background: linear-gradient(135deg, #FF6EB4, #e040a0);
+      color: #fff; border: none; border-radius: 14px;
+      font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.95rem; font-weight: 700;
+      cursor: pointer; transition: all 0.22s;
+      box-shadow: 0 4px 16px rgba(255,110,180,0.35);
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+    }
+    .auth-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(255,110,180,0.45); }
+    .auth-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+    .auth-divider {
+      text-align: center; position: relative; margin: 4px 0;
+      font-size: 0.78rem; color: #9CA3AF;
+    }
+    .auth-divider::before, .auth-divider::after {
+      content: ''; position: absolute; top: 50%; width: 38%; height: 1px;
+      background: rgba(255,255,255,0.6);
+    }
+    .auth-divider::before { left: 0; }
+    .auth-divider::after { right: 0; }
+    .auth-footer {
+      text-align: center; margin-top: 22px;
+      font-size: 0.83rem; color: #6B7280; font-family: 'DM Sans', sans-serif;
+    }
+    .auth-footer a { color: #FF6EB4; text-decoration: none; font-weight: 600; }
+    .auth-footer a:hover { text-decoration: underline; }
+    .back-home {
+      display: flex; align-items: center; gap: 6px;
+      justify-content: center; margin-bottom: 16px;
+      text-decoration: none; color: #9CA3AF; font-size: 0.8rem;
+      font-family: 'DM Sans', sans-serif; transition: color 0.2s;
+    }
+    .back-home:hover { color: #FF6EB4; }
+    .spinner {
+      width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.4);
+      border-top-color: #fff; border-radius: 50%;
+      animation: spin 0.7s linear infinite; display: none;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+  <div class="auth-page">
+    <div class="auth-wrap">
+      <a href="/landing.html" class="back-home">← Back to home</a>
+
+      <a href="/landing.html" class="auth-logo">
+        <div class="auth-logo-icon">💡</div>
+        <div>
+          <div class="auth-logo-text">IBEPS</div>
+          <div class="auth-logo-sub">Salem University</div>
+        </div>
+      </a>
+
+      <div class="auth-card">
+        <h1 class="auth-heading">Welcome back 👋</h1>
+        <p class="auth-sub">Log in to continue tracking your finances.</p>
+
+        <div id="authError" class="auth-error"></div>
+        <div id="authSuccess" class="auth-success"></div>
+
+        <div class="auth-form" id="loginForm">
+          <div>
+            <label class="auth-label" for="loginEmail">Email Address</label>
+            <div class="auth-input-wrap">
+              <span class="auth-input-icon">✉️</span>
+              <input type="email" id="loginEmail" class="auth-input" placeholder="your.email@example.com" autocomplete="email" />
+            </div>
+          </div>
+          <div>
+            <label class="auth-label" for="loginPassword">Password</label>
+            <div class="auth-input-wrap">
+              <span class="auth-input-icon">🔒</span>
+              <input type="password" id="loginPassword" class="auth-input" placeholder="Enter your password" autocomplete="current-password" />
+              <button class="pw-toggle" type="button" id="pwToggle" aria-label="Show password">👁️</button>
+            </div>
+          </div>
+          <button class="auth-btn" id="loginBtn" type="button">
+            <span id="loginBtnText">Log In</span>
+            <div class="spinner" id="loginSpinner"></div>
+          </button>
+        </div>
+
+        <div class="auth-footer">
+          Don't have an account? <a href="/register.html">Create one →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Redirect if already logged in
+    if (localStorage.getItem('ibeps_token')) window.location.href = '/index.html';
+
+    const emailInput    = document.getElementById('loginEmail');
+    const passwordInput = document.getElementById('loginPassword');
+    const loginBtn      = document.getElementById('loginBtn');
+    const loginBtnText  = document.getElementById('loginBtnText');
+    const loginSpinner  = document.getElementById('loginSpinner');
+    const authError     = document.getElementById('authError');
+    const authSuccess   = document.getElementById('authSuccess');
+    const pwToggle      = document.getElementById('pwToggle');
+
+    // Toggle password visibility
+    pwToggle.addEventListener('click', () => {
+      const isText = passwordInput.type === 'text';
+      passwordInput.type = isText ? 'password' : 'text';
+      pwToggle.textContent = isText ? '👁️' : '🙈';
+    });
+
+    function showError(msg) {
+      authError.textContent = msg;
+      authError.classList.add('show');
+      authSuccess.classList.remove('show');
+    }
+    function showSuccess(msg) {
+      authSuccess.textContent = msg;
+      authSuccess.classList.add('show');
+      authError.classList.remove('show');
+    }
+    function clearMessages() {
+      authError.classList.remove('show');
+      authSuccess.classList.remove('show');
+    }
+
+    async function doLogin() {
+      clearMessages();
+      const email = emailInput.value.trim();
+      const password = passwordInput.value;
+
+      if (!email || !password) { showError('Please fill in all fields.'); return; }
+      if (!/\S+@\S+\.\S+/.test(email)) { showError('Please enter a valid email address.'); return; }
+
+      loginBtn.disabled = true;
+      loginBtnText.textContent = 'Logging in…';
+      loginSpinner.style.display = 'block';
+
+      try {
+        const res = await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password }),
+        });
+        const data = await res.json();
+
+        if (!res.ok) {
+          showError(data.error || 'Login failed. Please try again.');
+          return;
+        }
+
+        showSuccess('Login successful! Redirecting…');
+        localStorage.setItem('ibeps_token', data.token);
+        localStorage.setItem('ibeps_user', JSON.stringify(data.user));
+        setTimeout(() => { window.location.href = '/index.html'; }, 800);
+      } catch (err) {
+        showError('Network error. Please check your connection.');
+      } finally {
+        loginBtn.disabled = false;
+        loginBtnText.textContent = 'Log In';
+        loginSpinner.style.display = 'none';
+      }
+    }
+
+    loginBtn.addEventListener('click', doLogin);
+    [emailInput, passwordInput].forEach(el => {
+      el.addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+    });
+  </script>
+</body>
+</html>

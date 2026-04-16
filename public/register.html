@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Create Account — IBEPS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/styles.css" />
+  <style>
+    .auth-page {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    .auth-wrap {
+      width: 100%;
+      max-width: 500px;
+    }
+    .auth-logo {
+      display: flex; align-items: center; gap: 12px;
+      justify-content: center; margin-bottom: 36px;
+      text-decoration: none;
+    }
+    .auth-logo-icon {
+      width: 44px; height: 44px; border-radius: 14px;
+      background: linear-gradient(135deg, #FF6EB4, #c026d3);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px;
+      box-shadow: 0 4px 18px rgba(255,110,180,0.38);
+    }
+    .auth-logo-text {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 1.3rem; font-weight: 800; letter-spacing: -0.04em;
+      background: linear-gradient(135deg, #FF6EB4, #A78BFA);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .auth-logo-sub { font-size: 0.62rem; color: #9CA3AF; text-transform: uppercase; letter-spacing: 0.08em; }
+    .auth-card {
+      background: rgba(255,255,255,0.65);
+      backdrop-filter: blur(28px) saturate(200%);
+      -webkit-backdrop-filter: blur(28px) saturate(200%);
+      border: 1px solid rgba(255,255,255,0.75);
+      box-shadow: 0 20px 60px rgba(139,92,246,0.18), 0 4px 16px rgba(0,0,0,0.06);
+      border-radius: 24px;
+      padding: 36px 32px;
+    }
+    .auth-heading {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 1.6rem; font-weight: 800; letter-spacing: -0.04em;
+      color: #1E1B4B; margin-bottom: 6px;
+    }
+    .auth-sub { color: #6B7280; font-size: 0.88rem; margin-bottom: 28px; font-family: 'DM Sans', sans-serif; }
+
+    /* Step dots */
+    .step-dots { display: flex; justify-content: center; gap: 7px; margin-bottom: 28px; }
+    .step-dot { width: 7px; height: 7px; border-radius: 50%; background: rgba(167,139,250,0.3); transition: all 0.22s; }
+    .step-dot.active { background: #FF6EB4; width: 22px; border-radius: 4px; }
+    .step-dot.done { background: #34D399; }
+
+    .reg-step { display: none; }
+    .reg-step.active { display: block; }
+
+    .auth-form { display: flex; flex-direction: column; gap: 18px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .auth-label {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 0.78rem; font-weight: 600; color: #1E1B4B;
+      margin-bottom: 6px; display: block;
+    }
+    .auth-input-wrap { position: relative; }
+    .auth-input-icon {
+      position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
+      font-size: 1rem; pointer-events: none;
+    }
+    .auth-input {
+      width: 100%; padding: 11px 14px 11px 40px;
+      background: rgba(255,255,255,0.7);
+      border: 1.5px solid rgba(255,255,255,0.8);
+      border-radius: 12px; outline: none;
+      font-family: 'DM Sans', sans-serif; font-size: 0.9rem;
+      color: #1E1B4B; transition: all 0.22s;
+    }
+    .auth-input.no-icon { padding-left: 14px; }
+    .auth-input:focus {
+      border-color: #FF6EB4;
+      box-shadow: 0 0 0 3px rgba(255,110,180,0.15);
+      background: rgba(255,255,255,0.9);
+    }
+    .auth-input::placeholder { color: #9CA3AF; }
+    .pw-toggle {
+      position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+      background: none; border: none; cursor: pointer; color: #9CA3AF;
+      font-size: 1rem; padding: 4px; transition: color 0.2s;
+    }
+    .pw-toggle:hover { color: #FF6EB4; }
+    .pw-strength {
+      display: flex; gap: 4px; margin-top: 7px;
+    }
+    .pw-bar {
+      flex: 1; height: 3px; border-radius: 100px;
+      background: rgba(139,92,246,0.1); transition: background 0.3s;
+    }
+    .pw-bar.weak { background: #F87171; }
+    .pw-bar.fair { background: #FBBF24; }
+    .pw-bar.good { background: #34D399; }
+    .pw-hint { font-size: 0.72rem; color: #9CA3AF; margin-top: 5px; font-family: 'DM Sans', sans-serif; }
+    .auth-error {
+      background: rgba(248,113,113,0.1); border: 1px solid rgba(248,113,113,0.3);
+      color: #F87171; border-radius: 10px; padding: 10px 14px;
+      font-size: 0.82rem; font-family: 'DM Sans', sans-serif; display: none;
+    }
+    .auth-error.show { display: block; }
+    .auth-success {
+      background: rgba(52,211,153,0.1); border: 1px solid rgba(52,211,153,0.3);
+      color: #34D399; border-radius: 10px; padding: 10px 14px;
+      font-size: 0.82rem; font-family: 'DM Sans', sans-serif; display: none;
+    }
+    .auth-success.show { display: block; }
+    .auth-btn {
+      width: 100%; padding: 13px;
+      background: linear-gradient(135deg, #FF6EB4, #e040a0);
+      color: #fff; border: none; border-radius: 14px;
+      font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.95rem; font-weight: 700;
+      cursor: pointer; transition: all 0.22s;
+      box-shadow: 0 4px 16px rgba(255,110,180,0.35);
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+    }
+    .auth-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(255,110,180,0.45); }
+    .auth-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+    .btn-back {
+      background: rgba(255,255,255,0.5); color: #6B7280;
+      border: 1.5px solid rgba(255,255,255,0.8);
+      box-shadow: none;
+      background-image: none;
+    }
+    .btn-back:hover { background: rgba(255,255,255,0.8); box-shadow: none; transform: none; }
+    .btn-row { display: flex; gap: 10px; }
+    .btn-row .auth-btn { flex: 1; }
+    .auth-footer {
+      text-align: center; margin-top: 22px;
+      font-size: 0.83rem; color: #6B7280; font-family: 'DM Sans', sans-serif;
+    }
+    .auth-footer a { color: #FF6EB4; text-decoration: none; font-weight: 600; }
+    .auth-footer a:hover { text-decoration: underline; }
+    .back-home {
+      display: flex; align-items: center; gap: 6px;
+      justify-content: center; margin-bottom: 16px;
+      text-decoration: none; color: #9CA3AF; font-size: 0.8rem;
+      font-family: 'DM Sans', sans-serif; transition: color 0.2s;
+    }
+    .back-home:hover { color: #FF6EB4; }
+    .spinner {
+      width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.4);
+      border-top-color: #fff; border-radius: 50%;
+      animation: spin 0.7s linear infinite; display: none;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    select.auth-input { padding-left: 14px; appearance: none; cursor: pointer; }
+    .select-wrap { position: relative; }
+    .select-wrap::after {
+      content: '▾'; position: absolute; right: 12px; top: 50%;
+      transform: translateY(-50%); pointer-events: none; color: #9CA3AF;
+      font-size: 0.85rem;
+    }
+    @media (max-width: 520px) {
+      .form-row { grid-template-columns: 1fr; }
+      .auth-card { padding: 28px 20px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="auth-page">
+    <div class="auth-wrap">
+      <a href="/landing.html" class="back-home">← Back to home</a>
+
+      <a href="/landing.html" class="auth-logo">
+        <div class="auth-logo-icon">💡</div>
+        <div>
+          <div class="auth-logo-text">IBEPS</div>
+          <div class="auth-logo-sub">Salem University</div>
+        </div>
+      </a>
+
+      <div class="auth-card">
+        <!-- Step dots -->
+        <div class="step-dots">
+          <div class="step-dot active" id="dot0"></div>
+          <div class="step-dot" id="dot1"></div>
+          <div class="step-dot" id="dot2"></div>
+        </div>
+
+        <div id="authError" class="auth-error"></div>
+        <div id="authSuccess" class="auth-success"></div>
+
+        <!-- Step 0: Account credentials -->
+        <div class="reg-step active" id="step0">
+          <h1 class="auth-heading">Create account ✨</h1>
+          <p class="auth-sub">Start budgeting smarter today — it's completely free.</p>
+          <div class="auth-form">
+            <div>
+              <label class="auth-label" for="regEmail">Email Address</label>
+              <div class="auth-input-wrap">
+                <span class="auth-input-icon">✉️</span>
+                <input type="email" id="regEmail" class="auth-input" placeholder="your.email@example.com" autocomplete="email" />
+              </div>
+            </div>
+            <div>
+              <label class="auth-label" for="regPassword">Password</label>
+              <div class="auth-input-wrap">
+                <span class="auth-input-icon">🔒</span>
+                <input type="password" id="regPassword" class="auth-input" placeholder="Create a strong password" autocomplete="new-password" id="regPassword" />
+                <button class="pw-toggle" type="button" id="pwToggle1">👁️</button>
+              </div>
+              <div class="pw-strength">
+                <div class="pw-bar" id="bar1"></div>
+                <div class="pw-bar" id="bar2"></div>
+                <div class="pw-bar" id="bar3"></div>
+                <div class="pw-bar" id="bar4"></div>
+              </div>
+              <div class="pw-hint" id="pwHint">Use 8+ characters with letters and numbers</div>
+            </div>
+            <div>
+              <label class="auth-label" for="regConfirm">Confirm Password</label>
+              <div class="auth-input-wrap">
+                <span class="auth-input-icon">🔐</span>
+                <input type="password" id="regConfirm" class="auth-input" placeholder="Repeat your password" autocomplete="new-password" />
+                <button class="pw-toggle" type="button" id="pwToggle2">👁️</button>
+              </div>
+            </div>
+            <button class="auth-btn" id="step0Btn" type="button">Continue →</button>
+          </div>
+        </div>
+
+        <!-- Step 1: Profile info -->
+        <div class="reg-step" id="step1">
+          <h1 class="auth-heading">Your profile 👤</h1>
+          <p class="auth-sub">Tell us about yourself so we can personalise your experience.</p>
+          <div class="auth-form">
+            <div>
+              <label class="auth-label" for="regName">Full Name</label>
+              <div class="auth-input-wrap">
+                <span class="auth-input-icon">🎓</span>
+                <input type="text" id="regName" class="auth-input" placeholder="e.g. Amina Ibrahim" autocomplete="name" />
+              </div>
+            </div>
+            <div class="form-row">
+              <div>
+                <label class="auth-label" for="regDept">Department</label>
+                <div class="auth-input-wrap">
+                  <span class="auth-input-icon">📚</span>
+                  <input type="text" id="regDept" class="auth-input" placeholder="e.g. Computer Science" />
+                </div>
+              </div>
+              <div>
+                <label class="auth-label" for="regLevel">Level</label>
+                <div class="select-wrap">
+                  <select id="regLevel" class="auth-input no-icon">
+                    <option value="100 Level">100 Level</option>
+                    <option value="200 Level">200 Level</option>
+                    <option value="300 Level" selected>300 Level</option>
+                    <option value="400 Level">400 Level</option>
+                    <option value="500 Level">500 Level</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div>
+              <label class="auth-label" for="regMatric">Matric Number</label>
+              <div class="auth-input-wrap">
+                <span class="auth-input-icon">🪪</span>
+                <input type="text" id="regMatric" class="auth-input" placeholder="SUL/CSC/..." />
+              </div>
+            </div>
+            <div class="btn-row">
+              <button class="auth-btn btn-back" id="step1Back" type="button">← Back</button>
+              <button class="auth-btn" id="step1Btn" type="button">Continue →</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 2: Budget & finish -->
+        <div class="reg-step" id="step2">
+          <h1 class="auth-heading">Set budget 💰</h1>
+          <p class="auth-sub">How much do you receive each month? We'll help you plan wisely.</p>
+          <div class="auth-form">
+            <div>
+              <label class="auth-label" for="regIncome">Monthly Income / Allowance (₦)</label>
+              <div class="auth-input-wrap">
+                <span class="auth-input-icon">💵</span>
+                <input type="number" id="regIncome" class="auth-input" placeholder="e.g. 35000" min="1000" />
+              </div>
+            </div>
+            <div class="btn-row">
+              <button class="auth-btn btn-back" id="step2Back" type="button">← Back</button>
+              <button class="auth-btn" id="step2Btn" type="button">
+                <span id="regBtnText">Create Account 🚀</span>
+                <div class="spinner" id="regSpinner"></div>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="auth-footer">
+          Already have an account? <a href="/login.html">Log in →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Redirect if already logged in
+    if (localStorage.getItem('ibeps_token')) window.location.href = '/index.html';
+
+    const dots    = [document.getElementById('dot0'), document.getElementById('dot1'), document.getElementById('dot2')];
+    const steps   = [document.getElementById('step0'), document.getElementById('step1'), document.getElementById('step2')];
+    const authError   = document.getElementById('authError');
+    const authSuccess = document.getElementById('authSuccess');
+    let currentStep   = 0;
+
+    function goToStep(n) {
+      steps[currentStep].classList.remove('active');
+      dots[currentStep].classList.remove('active');
+      dots[currentStep].classList.add('done');
+      currentStep = n;
+      steps[currentStep].classList.add('active');
+      dots[currentStep].classList.add('active');
+      clearMessages();
+    }
+    function goBack(n) {
+      steps[currentStep].classList.remove('active');
+      dots[currentStep].classList.remove('active');
+      currentStep = n;
+      steps[currentStep].classList.add('active');
+      dots[currentStep].classList.add('active');
+      dots[currentStep].classList.remove('done');
+      clearMessages();
+    }
+
+    function showError(msg) { authError.textContent = msg; authError.classList.add('show'); authSuccess.classList.remove('show'); }
+    function showSuccess(msg) { authSuccess.textContent = msg; authSuccess.classList.add('show'); authError.classList.remove('show'); }
+    function clearMessages() { authError.classList.remove('show'); authSuccess.classList.remove('show'); }
+
+    // Password strength
+    const pwInput = document.getElementById('regPassword');
+    const bars    = [document.getElementById('bar1'), document.getElementById('bar2'), document.getElementById('bar3'), document.getElementById('bar4')];
+    const pwHint  = document.getElementById('pwHint');
+
+    function checkStrength(pw) {
+      let s = 0;
+      if (pw.length >= 8) s++;
+      if (/[A-Z]/.test(pw)) s++;
+      if (/[0-9]/.test(pw)) s++;
+      if (/[^A-Za-z0-9]/.test(pw)) s++;
+      return s;
+    }
+    pwInput.addEventListener('input', () => {
+      const s = checkStrength(pwInput.value);
+      const cls = s <= 1 ? 'weak' : s === 2 ? 'fair' : 'good';
+      bars.forEach((b, i) => { b.className = 'pw-bar'; if (i < s) b.classList.add(cls); });
+      pwHint.textContent = s <= 1 ? 'Weak — add uppercase, numbers or symbols' : s === 2 ? 'Fair — getting stronger' : s === 3 ? 'Good password!' : 'Strong password 💪';
+    });
+
+    // Password toggle buttons
+    document.getElementById('pwToggle1').addEventListener('click', () => {
+      const el = document.getElementById('regPassword');
+      const t = el.type === 'text'; el.type = t ? 'password' : 'text';
+      document.getElementById('pwToggle1').textContent = t ? '👁️' : '🙈';
+    });
+    document.getElementById('pwToggle2').addEventListener('click', () => {
+      const el = document.getElementById('regConfirm');
+      const t = el.type === 'text'; el.type = t ? 'password' : 'text';
+      document.getElementById('pwToggle2').textContent = t ? '👁️' : '🙈';
+    });
+
+    // Step 0 → 1
+    document.getElementById('step0Btn').addEventListener('click', () => {
+      const email    = document.getElementById('regEmail').value.trim();
+      const password = document.getElementById('regPassword').value;
+      const confirm  = document.getElementById('regConfirm').value;
+      if (!email || !password || !confirm)  { showError('Please fill in all fields.'); return; }
+      if (!/\S+@\S+\.\S+/.test(email))      { showError('Please enter a valid email address.'); return; }
+      if (password.length < 8)              { showError('Password must be at least 8 characters.'); return; }
+      if (password !== confirm)             { showError('Passwords do not match.'); return; }
+      goToStep(1);
+    });
+
+    // Step 1 → 2
+    document.getElementById('step1Btn').addEventListener('click', () => {
+      const name = document.getElementById('regName').value.trim();
+      if (!name) { showError('Please enter your full name.'); return; }
+      goToStep(2);
+    });
+
+    // Back buttons
+    document.getElementById('step1Back').addEventListener('click', () => goBack(0));
+    document.getElementById('step2Back').addEventListener('click', () => goBack(1));
+
+    // Step 2 → Submit
+    document.getElementById('step2Btn').addEventListener('click', async () => {
+      const income = parseFloat(document.getElementById('regIncome').value);
+      if (!income || income < 1000) { showError('Please enter a valid monthly income (min ₦1,000).'); return; }
+
+      const payload = {
+        email:    document.getElementById('regEmail').value.trim(),
+        password: document.getElementById('regPassword').value,
+        name:     document.getElementById('regName').value.trim(),
+        dept:     document.getElementById('regDept').value.trim(),
+        level:    document.getElementById('regLevel').value,
+        matric:   document.getElementById('regMatric').value.trim(),
+        income,
+      };
+
+      const btn     = document.getElementById('step2Btn');
+      const btnText = document.getElementById('regBtnText');
+      const spinner = document.getElementById('regSpinner');
+      btn.disabled  = true; btnText.textContent = 'Creating…'; spinner.style.display = 'block';
+
+      try {
+        const res  = await fetch('/api/auth/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+        const data = await res.json();
+
+        if (!res.ok) { showError(data.error || 'Registration failed. Please try again.'); return; }
+
+        showSuccess('Account created! Redirecting…');
+        localStorage.setItem('ibeps_token', data.token);
+        localStorage.setItem('ibeps_user', JSON.stringify(data.user));
+        setTimeout(() => { window.location.href = '/index.html'; }, 800);
+      } catch (err) {
+        showError('Network error. Please check your connection.');
+      } finally {
+        btn.disabled = false; btnText.textContent = 'Create Account 🚀'; spinner.style.display = 'none';
+      }
+    });
+  </script>
+</body>
+</html>
