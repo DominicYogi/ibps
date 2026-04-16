@@ -490,9 +490,17 @@
       });
     });
 
-    // Redirect to app if already logged in
+    // Show "Go to Dashboard" in nav if already logged in (no forced redirect)
     const token = localStorage.getItem('ibeps_token');
-    if (token) window.location.href = '/index.html';
+    if (token) {
+      document.querySelectorAll('a[href="/login.html"]').forEach(a => {
+        a.textContent = 'Go to Dashboard →';
+        a.href = '/app';
+      });
+      document.querySelectorAll('a[href="/register.html"]').forEach(a => {
+        a.style.display = 'none';
+      });
+    }
   </script>
 </body>
 </html>

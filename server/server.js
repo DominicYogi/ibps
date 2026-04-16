@@ -14,7 +14,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 const PUBLIC_DIR = path.join(__dirname, '..', 'public');
-app.use(express.static(PUBLIC_DIR));
+// Disable auto-serving of index.html for "/" so our landing route below takes precedence
+app.use(express.static(PUBLIC_DIR, { index: false }));
 
 // ── Auth routes (public) ───────────────────────────────────
 app.use('/api/auth', require('./routes/auth'));
