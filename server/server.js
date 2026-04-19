@@ -14,23 +14,25 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 const PUBLIC_DIR = path.join(__dirname, '..', 'public');
-// Disable auto-serving of index.html for "/" so our landing route below takes precedence
+
+// ── IMPORTANT: index:false stops express.static from auto-serving
+// index.html for '/', so our explicit route handlers below fire correctly.
 app.use(express.static(PUBLIC_DIR, { index: false }));
 
 // ── Auth routes (public) ───────────────────────────────────
 app.use('/api/auth', require('./routes/auth'));
 
-// ── Protected API middleware ───────────────────────────────
+// ── Protected API routes ───────────────────────────────────
 const { requireAuth } = require('./routes/auth');
 app.use('/api/profile',       requireAuth, require('./routes/profile'));
 app.use('/api/transactions',  requireAuth, require('./routes/transactions'));
 app.use('/api/budget',        requireAuth, require('./routes/budget'));
 app.use('/api/notifications', requireAuth, require('./routes/notifications'));
-app.use('/api/food-prices',   require('./routes/foodPrices'));   // public price list
+app.use('/api/food-prices',   require('./routes/foodPrices'));
 app.use('/api/groq',          requireAuth, require('./routes/groq'));
 
 // ── Health ─────────────────────────────────────────────────
-app.get('/api/health', (req, res) => {
+app.get('/api/health', (_req, res) => {
   res.json({
     status:  'ok',
     app:     'IBEPS Backend',
@@ -42,9 +44,20 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-// ── SPA: serve landing for root, app for /app ─────────────
-app.get('/', (_req, res) => res.sendFile(path.join(PUBLIC_DIR, 'landing.html')));
-app.get('/app', (_req, res) => res.sendFile(path.join(PUBLIC_DIR, 'index.html')));
+// ── Page routes ────────────────────────────────────────────
+// '/'            → landing page (always, for anyone)
+// '/app'         → main dashboard (auth guard handled client-side)
+// '/login'       → login page
+// '/register'    → register page
+// '/landing'     → alias for landing page
+
+app.get('/',          (_req, res) => res.sendFile(path.join(PUBLIC_DIR, 'landing.html')));
+app.get('/landing',   (_req, res) => res.sendFile(path.join(PUBLIC_DIR, 'landing.html')));
+app.get('/login',     (_req, res) => res.sendFile(path.join(PUBLIC_DIR, 'login.html')));
+app.get('/register',  (_req, res) => res.sendFile(path.join(PUBLIC_DIR, 'register.html')));
+app.get('/app',       (_req, res) => res.sendFile(path.join(PUBLIC_DIR, 'index.html')));
+
+// ── SPA fallback (serves index.html for any other path) ───
 app.get('*', (_req, res) => res.sendFile(path.join(PUBLIC_DIR, 'index.html')));
 
 // ── Error handler ──────────────────────────────────────────

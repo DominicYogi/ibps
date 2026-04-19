@@ -2,636 +2,922 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>IBEPS — Intelligent Budgeting &amp; Expense Prediction System</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <title>IBEPS — Student Budget Tracker</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/css/styles.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --green:  #22C55E; --green-d: #16A34A;
+      --red:    #EF4444; --red-d:   #DC2626;
+      --blue:   #3B82F6; --pink:    #FF6EB4;
+      --bg:     #F0F4FF;
+      --card:   rgba(255,255,255,0.78);
+      --border: rgba(255,255,255,0.72);
+      --shadow: 0 4px 24px rgba(99,102,241,0.1);
+      --text:   #1E1B4B; --text2: #6B7280;
+      --font:   'Plus Jakarta Sans', sans-serif;
+      --radius: 18px; --trans: all 0.2s ease;
+      --bot: 72px;
+    }
+    html, body { height: 100%; font-family: var(--font); background: var(--bg); color: var(--text); -webkit-font-smoothing: antialiased; }
+    body::before {
+      content:''; position:fixed; inset:0; z-index:-1; pointer-events:none;
+      background:
+        radial-gradient(ellipse 80% 60% at 20% 0%,  rgba(232,217,255,.85) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 70% at 80% 100%, rgba(201,242,255,.8)  0%, transparent 55%),
+        radial-gradient(ellipse 50% 40% at 60% 50%,  rgba(255,110,180,.06) 0%, transparent 50%);
+    }
+    .app { display:flex; flex-direction:column; min-height:100vh; max-width:480px; margin:0 auto; }
+
+    /* ── TOP BAR ── */
+    .topbar {
+      position:sticky; top:0; z-index:100;
+      padding:14px 18px 10px;
+      background:rgba(240,244,255,.88);
+      backdrop-filter:blur(20px);
+      border-bottom:1px solid var(--border);
+      display:flex; align-items:center; justify-content:space-between;
+    }
+    .top-logo { display:flex; align-items:center; gap:9px; }
+    .logo-icon {
+      width:36px; height:36px; border-radius:11px;
+      background:linear-gradient(135deg,#FF6EB4,#c026d3);
+      display:flex; align-items:center; justify-content:center;
+      font-size:17px; box-shadow:0 3px 10px rgba(255,110,180,.35);
+    }
+    .logo-name { font-size:.95rem; font-weight:800; color:var(--text); }
+    .logo-sub  { font-size:.58rem; color:var(--text2); letter-spacing:.05em; }
+    .month-pill {
+      display:flex; align-items:center; gap:5px;
+      background:var(--card); border:1px solid var(--border);
+      border-radius:100px; padding:5px 11px;
+      font-size:.78rem; font-weight:600; color:var(--text);
+      box-shadow:var(--shadow);
+    }
+    .month-pill button {
+      background:none; border:none; cursor:pointer; color:var(--text2);
+      font-size:1rem; line-height:1; padding:0 2px; transition:var(--trans);
+    }
+    .month-pill button:hover { color:var(--pink); }
+
+    /* ── SCROLL AREA ── */
+    .scroll-area {
+      flex:1; overflow-y:auto; padding:14px 14px calc(var(--bot) + 18px);
+      -webkit-overflow-scrolling:touch;
+    }
+
+    /* ── BOTTOM NAV ── */
+    .bottom-nav {
+      position:fixed; bottom:0; left:50%; transform:translateX(-50%);
+      width:100%; max-width:480px; height:var(--bot);
+      background:rgba(255,255,255,.92);
+      backdrop-filter:blur(20px);
+      border-top:1px solid var(--border);
+      display:flex; align-items:center; justify-content:space-around;
+      padding:0 6px 8px; z-index:100;
+      box-shadow:0 -4px 20px rgba(99,102,241,.08);
+    }
+    .nav-btn {
+      flex:1; display:flex; flex-direction:column; align-items:center;
+      gap:3px; padding:8px 4px; border:none; background:none;
+      cursor:pointer; border-radius:12px; transition:var(--trans);
+      color:var(--text2);
+    }
+    .nav-btn .nav-icon  { font-size:1.25rem; line-height:1; }
+    .nav-btn .nav-label { font-size:.6rem; font-weight:600; letter-spacing:.02em; }
+    .nav-btn.active { color:var(--pink); }
+    .nav-btn.active .nav-icon { transform:scale(1.1); }
+    .nav-add-btn {
+      width:52px; height:52px; border-radius:50%; flex-shrink:0;
+      background:linear-gradient(135deg,#FF6EB4,#c026d3);
+      border:none; cursor:pointer; color:#fff; font-size:1.6rem;
+      box-shadow:0 4px 18px rgba(255,110,180,.5);
+      display:flex; align-items:center; justify-content:center;
+      transition:var(--trans); margin-top:-18px;
+    }
+    .nav-add-btn:hover { transform:scale(1.08); box-shadow:0 6px 24px rgba(255,110,180,.6); }
+
+    /* ── CARD ── */
+    .card {
+      background:var(--card);
+      backdrop-filter:blur(20px) saturate(180%);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+    }
+
+    /* ── SCREEN SWITCHING ── */
+    .screen { display:none; }
+    .screen.active { display:block; }
+
+    /* ═══ HOME ═══ */
+    .balance-card {
+      background:linear-gradient(135deg,#1E1B4B 0%,#312e81 55%,#4c1d95 100%);
+      border-radius:var(--radius); padding:22px 20px 20px;
+      color:#fff; margin-bottom:12px;
+      box-shadow:0 8px 32px rgba(30,27,75,.3);
+      position:relative; overflow:hidden;
+    }
+    .balance-card::after {
+      content:''; position:absolute; top:-40px; right:-40px;
+      width:150px; height:150px; border-radius:50%;
+      background:rgba(255,255,255,.05);
+    }
+    .bal-label { font-size:.72rem; font-weight:600; opacity:.65; text-transform:uppercase; letter-spacing:.1em; margin-bottom:5px; }
+    .bal-amount { font-size:2.2rem; font-weight:800; letter-spacing:-.04em; margin-bottom:18px; }
+    .bal-row { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+    .bal-stat { background:rgba(255,255,255,.1); border-radius:12px; padding:11px 12px; }
+    .bal-stat-label { font-size:.64rem; opacity:.65; font-weight:600; margin-bottom:3px; }
+    .bal-stat-val { font-size:1.05rem; font-weight:800; letter-spacing:-.02em; }
+    .bal-stat-val.inc { color:#86EFAC; }
+    .bal-stat-val.exp { color:#FCA5A5; }
+
+    .stat-row { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:12px; }
+    .stat-mini { padding:12px 10px; text-align:center; }
+    .stat-mini-val   { font-size:1.5rem; font-weight:800; letter-spacing:-.04em; }
+    .stat-mini-label { font-size:.63rem; font-weight:600; color:var(--text2); text-transform:uppercase; letter-spacing:.06em; margin-top:2px; }
+
+    .sec-head { display:flex; align-items:center; justify-content:space-between; margin:16px 0 8px; }
+    .sec-title { font-size:.83rem; font-weight:700; color:var(--text); }
+    .see-all { font-size:.73rem; font-weight:600; color:var(--pink); background:none; border:none; cursor:pointer; padding:0; }
+
+    /* Budget bars */
+    .bbar-item {
+      display:flex; align-items:center; gap:10px;
+      padding:11px 13px;
+      border-bottom:1px solid rgba(99,102,241,.06);
+    }
+    .bbar-item:first-child { border-radius:var(--radius) var(--radius) 0 0; }
+    .bbar-item:last-child  { border-radius:0 0 var(--radius) var(--radius); border-bottom:none; }
+    .bbar-icon { font-size:1.15rem; width:26px; text-align:center; flex-shrink:0; }
+    .bbar-info { flex:1; min-width:0; }
+    .bbar-top { display:flex; justify-content:space-between; align-items:baseline; margin-bottom:5px; }
+    .bbar-name { font-size:.78rem; font-weight:600; }
+    .bbar-amt  { font-size:.72rem; font-weight:600; color:var(--text2); }
+    .bbar-track { height:6px; border-radius:100px; background:rgba(99,102,241,.1); overflow:hidden; }
+    .bbar-fill  { height:100%; border-radius:100px; transition:width .6s ease; }
+    .bbar-fill.ok   { background:linear-gradient(90deg,var(--green),#4ade80); }
+    .bbar-fill.warn { background:linear-gradient(90deg,#f59e0b,#fbbf24); }
+    .bbar-fill.over { background:linear-gradient(90deg,var(--red),#f87171); }
+    .bbar-pct  { font-size:.7rem; font-weight:700; width:32px; text-align:right; flex-shrink:0; }
+    .bbar-pct.ok   { color:var(--green); }
+    .bbar-pct.warn { color:#f59e0b; }
+    .bbar-pct.over { color:var(--red); }
+
+    /* Transactions */
+    .txn-item {
+      display:flex; align-items:center; gap:11px;
+      padding:11px 13px;
+      border-bottom:1px solid rgba(99,102,241,.06);
+      transition:var(--trans);
+    }
+    .txn-item:first-child { border-radius:var(--radius) var(--radius) 0 0; }
+    .txn-item:last-child  { border-radius:0 0 var(--radius) var(--radius); border-bottom:none; }
+    .txn-ico {
+      width:38px; height:38px; border-radius:11px;
+      display:flex; align-items:center; justify-content:center;
+      font-size:1.05rem; flex-shrink:0;
+    }
+    .txn-ico.income  { background:rgba(34,197,94,.12); }
+    .txn-ico.expense { background:rgba(239,68,68,.1); }
+    .txn-info { flex:1; min-width:0; }
+    .txn-desc { font-size:.8rem; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .txn-cat  { font-size:.68rem; color:var(--text2); margin-top:2px; }
+    .txn-right { text-align:right; flex-shrink:0; }
+    .txn-amt  { font-size:.88rem; font-weight:700; }
+    .txn-amt.income  { color:var(--green); }
+    .txn-amt.expense { color:var(--red); }
+    .txn-date { font-size:.66rem; color:var(--text2); margin-top:2px; }
+    .txn-del  {
+      background:none; border:none; cursor:pointer;
+      color:rgba(239,68,68,.35); font-size:.95rem; padding:4px;
+      transition:var(--trans); flex-shrink:0;
+    }
+    .txn-del:hover { color:var(--red); }
+
+    .empty {
+      text-align:center; padding:34px 20px;
+      color:var(--text2); font-size:.83rem; line-height:1.6;
+    }
+    .empty-ico { font-size:2.2rem; margin-bottom:8px; opacity:.45; display:block; }
+
+    /* ═══ HISTORY ═══ */
+    .filter-tabs { display:flex; gap:7px; margin-bottom:12px; }
+    .ftab {
+      flex:1; padding:8px; text-align:center; border-radius:10px;
+      font-size:.76rem; font-weight:600; cursor:pointer;
+      border:1.5px solid rgba(99,102,241,.15);
+      background:var(--card); color:var(--text2);
+      transition:var(--trans);
+    }
+    .ftab.active { background:var(--pink); color:#fff; border-color:var(--pink); }
+
+    /* ═══ BUDGET ═══ */
+    .bud-head { padding:16px 18px; text-align:center; margin-bottom:12px; }
+    .bud-total-lbl { font-size:.7rem; color:var(--text2); font-weight:600; text-transform:uppercase; letter-spacing:.08em; margin-bottom:4px; }
+    .bud-total-val { font-size:1.8rem; font-weight:800; color:var(--pink); letter-spacing:-.04em; }
+    .bud-total-sub { font-size:.72rem; color:var(--text2); margin-top:3px; }
+
+    .bud-row {
+      display:flex; align-items:center; gap:11px;
+      padding:12px 13px;
+      border-bottom:1px solid rgba(99,102,241,.06);
+    }
+    .bud-row:first-child { border-radius:var(--radius) var(--radius) 0 0; }
+    .bud-row:last-child  { border-radius:0 0 var(--radius) var(--radius); border-bottom:none; }
+    .bud-emoji { font-size:1.2rem; width:30px; text-align:center; flex-shrink:0; }
+    .bud-name  { font-size:.82rem; font-weight:600; flex:1; }
+    .bud-input {
+      width:105px; flex-shrink:0; text-align:right;
+      border:1.5px solid rgba(99,102,241,.18); border-radius:10px;
+      padding:6px 9px; font-size:.82rem; font-weight:600;
+      font-family:var(--font); background:rgba(255,255,255,.8);
+      color:var(--text); outline:none; transition:var(--trans);
+    }
+    .bud-input:focus { border-color:var(--pink); box-shadow:0 0 0 3px rgba(255,110,180,.12); }
+    .save-btn {
+      width:100%; margin-top:12px; padding:14px;
+      background:linear-gradient(135deg,#FF6EB4,#c026d3);
+      color:#fff; border:none; border-radius:var(--radius);
+      font-family:var(--font); font-size:.92rem; font-weight:700;
+      cursor:pointer; transition:var(--trans);
+      box-shadow:0 4px 16px rgba(255,110,180,.35);
+    }
+    .save-btn:hover { transform:translateY(-2px); box-shadow:0 8px 24px rgba(255,110,180,.45); }
+    .save-btn:disabled { opacity:.6; cursor:not-allowed; transform:none; }
+
+    /* ═══ PROFILE ═══ */
+    .prof-head { padding:22px 18px 16px; text-align:center; margin-bottom:12px; }
+    .prof-avatar {
+      width:68px; height:68px; border-radius:50%; margin:0 auto 9px;
+      background:linear-gradient(135deg,#FF6EB4,#A78BFA);
+      display:flex; align-items:center; justify-content:center;
+      font-size:1.8rem; color:#fff; font-weight:800;
+      box-shadow:0 4px 16px rgba(255,110,180,.35);
+    }
+    .prof-name { font-size:1.05rem; font-weight:800; }
+    .prof-sub  { font-size:.75rem; color:var(--text2); margin-top:3px; }
+
+    .fgroup {
+      display:flex; flex-direction:column; gap:4px;
+      padding:12px 13px;
+      border-bottom:1px solid rgba(99,102,241,.06);
+    }
+    .fgroup:first-child { border-radius:var(--radius) var(--radius) 0 0; }
+    .fgroup:last-child  { border-radius:0 0 var(--radius) var(--radius); border-bottom:none; }
+    .flabel { font-size:.67rem; font-weight:700; color:var(--text2); text-transform:uppercase; letter-spacing:.08em; }
+    .finput {
+      border:none; background:none; font-family:var(--font);
+      font-size:.88rem; font-weight:600; color:var(--text);
+      outline:none; width:100%; padding:2px 0;
+    }
+    .finput::placeholder { color:rgba(107,114,128,.45); font-weight:400; }
+    select.finput { cursor:pointer; }
+
+    .logout-btn {
+      width:100%; margin-top:12px; padding:14px;
+      background:rgba(239,68,68,.08); color:var(--red);
+      border:1.5px solid rgba(239,68,68,.22); border-radius:var(--radius);
+      font-family:var(--font); font-size:.88rem; font-weight:700;
+      cursor:pointer; transition:var(--trans);
+    }
+    .logout-btn:hover { background:rgba(239,68,68,.15); }
+
+    /* ═══ ADD MODAL ═══ */
+    .backdrop {
+      position:fixed; inset:0; background:rgba(0,0,0,.42);
+      backdrop-filter:blur(4px); z-index:200;
+      display:flex; align-items:flex-end; justify-content:center;
+      opacity:0; pointer-events:none; transition:opacity .25s ease;
+    }
+    .backdrop.open { opacity:1; pointer-events:all; }
+    .sheet {
+      width:100%; max-width:480px;
+      background:#fff; border-radius:24px 24px 0 0;
+      transform:translateY(100%);
+      transition:transform .3s cubic-bezier(.34,1.56,.64,1);
+      max-height:92vh; overflow-y:auto;
+      padding-bottom:env(safe-area-inset-bottom);
+    }
+    .backdrop.open .sheet { transform:translateY(0); }
+
+    .sheet-handle {
+      width:38px; height:4px; border-radius:100px;
+      background:#E5E7EB; margin:11px auto 0;
+    }
+    .sheet-head { padding:14px 18px 0; }
+    .sheet-title { font-size:1.05rem; font-weight:800; margin-bottom:14px; }
+
+    .type-toggle { display:grid; grid-template-columns:1fr 1fr; gap:7px; margin-bottom:18px; }
+    .tbtn {
+      padding:11px; text-align:center; border-radius:12px; cursor:pointer;
+      border:2px solid transparent; font-family:var(--font);
+      font-size:.83rem; font-weight:700; transition:var(--trans);
+      background:#F9FAFB; color:var(--text2);
+    }
+    .tbtn.ti { background:rgba(34,197,94,.1); color:var(--green-d); border-color:var(--green); }
+    .tbtn.te { background:rgba(239,68,68,.08); color:var(--red-d);  border-color:var(--red); }
+
+    .sheet-body { padding:0 18px 18px; }
+    .mf { margin-bottom:14px; }
+    .ml { font-size:.7rem; font-weight:700; color:var(--text2); text-transform:uppercase; letter-spacing:.08em; margin-bottom:5px; display:block; }
+    .mi {
+      width:100%; padding:12px 13px; border-radius:12px;
+      border:1.5px solid rgba(99,102,241,.2);
+      font-family:var(--font); font-size:.92rem; font-weight:600;
+      color:var(--text); background:#F9FAFB; outline:none;
+      transition:var(--trans);
+    }
+    .mi:focus { border-color:var(--pink); box-shadow:0 0 0 3px rgba(255,110,180,.12); background:#fff; }
+    .mi.big { font-size:1.4rem; font-weight:800; letter-spacing:-.02em; text-align:center; }
+    .mi::placeholder { font-weight:400; color:#9CA3AF; }
+    select.mi { cursor:pointer; }
+
+    .cat-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:7px; }
+    .cchip {
+      padding:7px 3px; text-align:center; border-radius:10px;
+      cursor:pointer; border:2px solid transparent;
+      background:#F3F4F6; transition:var(--trans);
+    }
+    .cchip-ico  { font-size:1.2rem; display:block; margin-bottom:2px; }
+    .cchip-name { font-size:.58rem; font-weight:600; color:var(--text2); display:block; line-height:1.2; }
+    .cchip.sel  { border-color:var(--pink); background:rgba(255,110,180,.1); }
+    .cchip.sel .cchip-name { color:var(--pink); }
+
+    .msubmit {
+      width:100%; padding:15px; border-radius:13px; border:none;
+      font-family:var(--font); font-size:.95rem; font-weight:700;
+      cursor:pointer; transition:var(--trans); margin-top:4px;
+    }
+    .msubmit.income  { background:var(--green); color:#fff; box-shadow:0 4px 16px rgba(34,197,94,.35); }
+    .msubmit.expense { background:var(--red);   color:#fff; box-shadow:0 4px 16px rgba(239,68,68,.3); }
+    .msubmit:hover   { transform:translateY(-2px); }
+    .msubmit:disabled{ opacity:.6; cursor:not-allowed; transform:none; }
+
+    /* ── TOAST ── */
+    .toast {
+      position:fixed; top:74px; left:50%; transform:translateX(-50%) translateY(-16px);
+      background:#1E1B4B; color:#fff; border-radius:100px;
+      padding:9px 18px; font-size:.8rem; font-weight:600;
+      opacity:0; transition:all .3s ease; z-index:300;
+      white-space:nowrap; pointer-events:none;
+    }
+    .toast.show  { opacity:1; transform:translateX(-50%) translateY(0); }
+    .toast.error { background:var(--red); }
+    .toast.ok    { background:var(--green-d); }
+
+    /* ── SPINNER ── */
+    .spin-wrap { display:flex; align-items:center; justify-content:center; padding:40px; color:var(--text2); gap:9px; font-size:.82rem; }
+    .spinner { width:18px; height:18px; border:2px solid rgba(255,110,180,.3); border-top-color:var(--pink); border-radius:50%; animation:_spin .7s linear infinite; }
+    @keyframes _spin { to{ transform:rotate(360deg); } }
+  </style>
 </head>
 <body>
 
-<!-- ===================== SAVE PING ===================== -->
-<div class="save-ping" id="savePing">✓ Saved successfully</div>
+<div class="toast" id="toast"></div>
 
-<!-- ===================== ONBOARDING ===================== -->
-<div class="onboarding" id="onboarding">
-  <div class="onboard-card">
-    <div class="step-dots">
-      <div class="step-dot active" id="dot0"></div>
-      <div class="step-dot" id="dot1"></div>
-      <div class="step-dot" id="dot2"></div>
+<div class="app" id="app" style="display:none">
+
+  <!-- ── TOP BAR ── -->
+  <div class="topbar">
+    <div class="top-logo">
+      <div class="logo-icon">💡</div>
+      <div>
+        <div class="logo-name">IBEPS</div>
+        <div class="logo-sub">Budget Tracker</div>
+      </div>
     </div>
-
-    <!-- Step 0: Welcome -->
-    <div class="onboard-step active" id="step0">
-      <div class="onboard-icon">🎓</div>
-      <div class="onboard-title">Welcome to <span>IBEPS</span></div>
-      <div class="onboard-sub">Your intelligent budgeting companion built for Salem University students. Plan smarter, spend wisely, predict the future of your wallet.</div>
-      <button class="btn btn-gold" id="ob-next-0">Get Started →</button>
+    <div class="month-pill">
+      <button id="mPrev">‹</button>
+      <span id="mLabel">—</span>
+      <button id="mNext">›</button>
     </div>
+  </div>
 
-    <!-- Step 1: Profile -->
-    <div class="onboard-step" id="step1">
-      <div class="onboard-icon">👤</div>
-      <div class="onboard-title">Create your <span>Profile</span></div>
-      <div class="onboard-sub">Tell us about yourself so we can personalise your experience.</div>
-      <div class="form-grid">
-        <div class="form-group">
-          <label for="ob_name">Full Name</label>
-          <input type="text" id="ob_name" placeholder="e.g. Amina Ibrahim" />
+  <div class="scroll-area">
+
+    <!-- ══════════════════ HOME ══════════════════ -->
+    <div class="screen active" id="screen-home">
+
+      <div class="balance-card">
+        <div class="bal-label">Balance This Month</div>
+        <div class="bal-amount" id="hBal">₦0</div>
+        <div class="bal-row">
+          <div class="bal-stat">
+            <div class="bal-stat-label">↑ Money In</div>
+            <div class="bal-stat-val inc" id="hInc">₦0</div>
+          </div>
+          <div class="bal-stat">
+            <div class="bal-stat-label">↓ Spent</div>
+            <div class="bal-stat-val exp" id="hExp">₦0</div>
+          </div>
         </div>
-        <div class="form-group">
-          <label for="ob_dept">Department</label>
-          <input type="text" id="ob_dept" placeholder="e.g. Computer Science" />
+      </div>
+
+      <div class="stat-row">
+        <div class="card stat-mini">
+          <div class="stat-mini-val" id="hScore" style="color:var(--pink)">—</div>
+          <div class="stat-mini-label">Health</div>
         </div>
-        <div class="form-group">
-          <label for="ob_level">Level</label>
-          <select id="ob_level">
+        <div class="card stat-mini">
+          <div class="stat-mini-val" id="hDays" style="color:var(--blue)">—</div>
+          <div class="stat-mini-label">Days Left</div>
+        </div>
+        <div class="card stat-mini">
+          <div class="stat-mini-val" id="hSave" style="color:var(--green)">—</div>
+          <div class="stat-mini-label">Saved</div>
+        </div>
+      </div>
+
+      <div class="sec-head">
+        <div class="sec-title">📊 Budget Overview</div>
+        <button class="see-all" id="goBudget">Set Budget →</button>
+      </div>
+      <div class="card" id="hBars"><div class="spin-wrap"><div class="spinner"></div>Loading…</div></div>
+
+      <div class="sec-head">
+        <div class="sec-title">🕒 Recent Transactions</div>
+        <button class="see-all" id="goHistory">See All →</button>
+      </div>
+      <div class="card" id="hRecent"><div class="spin-wrap"><div class="spinner"></div>Loading…</div></div>
+
+    </div>
+    <!-- /HOME -->
+
+    <!-- ══════════════════ HISTORY ══════════════════ -->
+    <div class="screen" id="screen-history">
+      <div class="filter-tabs">
+        <div class="ftab active" data-f="all">All</div>
+        <div class="ftab" data-f="income">Money In</div>
+        <div class="ftab" data-f="expense">Spending</div>
+      </div>
+      <div class="card" id="histList"><div class="spin-wrap"><div class="spinner"></div>Loading…</div></div>
+    </div>
+    <!-- /HISTORY -->
+
+    <!-- ══════════════════ BUDGET ══════════════════ -->
+    <div class="screen" id="screen-budget">
+      <div class="card bud-head">
+        <div class="bud-total-lbl">Total Budget This Month</div>
+        <div class="bud-total-val" id="budTotal">₦0</div>
+        <div class="bud-total-sub">Enter how much you plan to spend per category</div>
+      </div>
+      <div class="card" id="budCats"><div class="spin-wrap"><div class="spinner"></div>Loading…</div></div>
+      <button class="save-btn" id="budSave">💾 Save Budget</button>
+    </div>
+    <!-- /BUDGET -->
+
+    <!-- ══════════════════ PROFILE ══════════════════ -->
+    <div class="screen" id="screen-profile">
+      <div class="card prof-head">
+        <div class="prof-avatar" id="pAvatar">?</div>
+        <div class="prof-name" id="pDispName">Your Profile</div>
+        <div class="prof-sub"  id="pDispSub">Salem University Lokoja</div>
+      </div>
+      <div class="card" style="margin-bottom:12px">
+        <div class="fgroup"><div class="flabel">Full Name</div><input class="finput" id="pName" placeholder="e.g. Martin Enimali" /></div>
+        <div class="fgroup"><div class="flabel">Department</div><input class="finput" id="pDept" placeholder="e.g. Computer Science" /></div>
+        <div class="fgroup">
+          <div class="flabel">Level</div>
+          <select class="finput" id="pLevel">
             <option>100 Level</option><option>200 Level</option>
-            <option selected>300 Level</option><option>400 Level</option><option>500 Level</option>
+            <option>300 Level</option><option selected>400 Level</option>
+            <option>500 Level</option>
           </select>
         </div>
-        <div class="form-group">
-          <label for="ob_matric">Matric Number</label>
-          <input type="text" id="ob_matric" placeholder="SUL/CSC/..." />
-        </div>
-        <div class="form-group full">
-          <label for="ob_email">Email Address (for notifications)</label>
-          <input type="email" id="ob_email" placeholder="your.email@example.com" />
-        </div>
+        <div class="fgroup"><div class="flabel">Matric Number</div><input class="finput" id="pMatric" placeholder="SUL/CSC/…" /></div>
+        <div class="fgroup"><div class="flabel">Monthly Allowance (₦)</div><input class="finput" id="pIncome" type="number" placeholder="e.g. 35000" min="0" inputmode="numeric" /></div>
       </div>
-      <button class="btn btn-gold" id="ob-next-1">Continue →</button>
+      <button class="save-btn" id="pSave">💾 Save Profile</button>
+      <button class="logout-btn" id="logoutBtn">🚪 Log Out</button>
     </div>
+    <!-- /PROFILE -->
 
-    <!-- Step 2: Income -->
-    <div class="onboard-step" id="step2">
-      <div class="onboard-icon">💰</div>
-      <div class="onboard-title">Set Your <span>Monthly Budget</span></div>
-      <div class="onboard-sub">How much do you receive each month? We'll help you plan how to use it wisely.</div>
-      <div class="form-group" style="margin-bottom:20px">
-        <label for="ob_income">Monthly Income / Allowance (₦)</label>
-        <input type="number" id="ob_income" placeholder="e.g. 35000" min="1000" />
+  </div><!-- /scroll-area -->
+
+  <!-- ── BOTTOM NAV ── -->
+  <nav class="bottom-nav">
+    <button class="nav-btn active" data-s="home">
+      <span class="nav-icon">🏠</span><span class="nav-label">Home</span>
+    </button>
+    <button class="nav-btn" data-s="history">
+      <span class="nav-icon">📋</span><span class="nav-label">History</span>
+    </button>
+    <button class="nav-add-btn" id="openModal" title="Add transaction">＋</button>
+    <button class="nav-btn" data-s="budget">
+      <span class="nav-icon">🗂️</span><span class="nav-label">Budget</span>
+    </button>
+    <button class="nav-btn" data-s="profile">
+      <span class="nav-icon">👤</span><span class="nav-label">Profile</span>
+    </button>
+  </nav>
+</div>
+
+<!-- ═══════════════ ADD TRANSACTION MODAL ═══════════════ -->
+<div class="backdrop" id="modal">
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-head">
+      <div class="sheet-title">Add Transaction</div>
+      <div class="type-toggle">
+        <button class="tbtn ti" id="tIncome">↑ Money In</button>
+        <button class="tbtn"    id="tExpense">↓ Spending</button>
       </div>
-      <button class="btn btn-gold" id="ob-finish">Start Budgeting 🚀</button>
+    </div>
+    <div class="sheet-body">
+      <div class="mf">
+        <label class="ml">Amount (₦)</label>
+        <input class="mi big" id="mAmt" type="number" placeholder="0" min="1" inputmode="decimal" />
+      </div>
+      <div class="mf">
+        <label class="ml">What is this for?</label>
+        <input class="mi" id="mDesc" placeholder="e.g. Lunch, Bus fare, Allowance…" />
+      </div>
+      <div class="mf" id="mCatField">
+        <label class="ml">Category</label>
+        <div class="cat-grid" id="catGrid"></div>
+      </div>
+      <div class="mf" id="mSrcField" style="display:none">
+        <label class="ml">Source</label>
+        <div class="cat-grid" id="srcGrid"></div>
+      </div>
+      <div class="mf">
+        <label class="ml">Date</label>
+        <input class="mi" id="mDate" type="date" />
+      </div>
+      <button class="msubmit income" id="mSubmit">Add Money In ✓</button>
     </div>
   </div>
 </div>
 
-<!-- ===================== MAIN APP ===================== -->
-<div class="app-shell" id="appShell" style="display:none">
+<script>
+// ═══════════════════ CONFIG ═══════════════════
+const API = '/api';
+const CATS = [
+  {id:'feeding',      name:'Feeding',   emoji:'🍽️'},
+  {id:'transport',    name:'Transport', emoji:'🚌'},
+  {id:'accommodation',name:'Housing',   emoji:'🏠'},
+  {id:'books',        name:'Books',     emoji:'📚'},
+  {id:'personal',     name:'Personal',  emoji:'💄'},
+  {id:'fees',         name:'Fees',      emoji:'🎓'},
+  {id:'misc',         name:'Other',     emoji:'🎲'},
+];
+const SRCS = [
+  {id:'allowance',   name:'Allowance',  emoji:'💵'},
+  {id:'scholarship', name:'Scholarship',emoji:'🎓'},
+  {id:'parttime',    name:'Work',       emoji:'💼'},
+  {id:'family',      name:'Family',     emoji:'👨‍👩‍👧'},
+  {id:'other-income',name:'Other',      emoji:'💰'},
+];
 
-  <!-- Sidebar -->
-  <aside class="sidebar">
-    <div class="logo-area">
-      <div class="logo-mark">
-        <div class="logo-icon">💡</div>
-        <div>
-          <div class="logo-text"><span>IB</span>EPS</div>
-          <div class="logo-sub">Salem University</div>
+// ═══════════════════ STATE ═══════════════════
+const S = { month: monthNow(), txns:[], budget:{total:0,cats:{}}, profile:null };
+function monthNow(){ return new Date().toISOString().slice(0,7); }
+function today()   { return new Date().toISOString().slice(0,10); }
+
+// ═══════════════════ API ═════════════════════
+function tok(){ return localStorage.getItem('ibeps_token')||''; }
+async function req(path, opts={}){
+  const r = await fetch(API+path,{
+    headers:{'Content-Type':'application/json',...(tok()?{Authorization:'Bearer '+tok()}:{})},
+    ...opts, body:opts.body?JSON.stringify(opts.body):undefined
+  });
+  if(r.status===401){ localStorage.removeItem('ibeps_token'); location.href='/login'; return; }
+  const j = await r.json();
+  if(!r.ok) throw new Error(j.error||'Error');
+  return j;
+}
+
+// ═══════════════════ HELPERS ═════════════════
+function ₦(n){ return '₦'+(Math.round(n)||0).toLocaleString('en-NG'); }
+function dateShort(d){ return new Date(d+'T00:00:00').toLocaleDateString('en-NG',{day:'numeric',month:'short'}); }
+function mLabel(ym){ return new Date(ym+'-01').toLocaleDateString('en-NG',{month:'long',year:'numeric'}); }
+function catOf(id){ return CATS.find(c=>c.id===id)||SRCS.find(c=>c.id===id)||{name:id,emoji:'💰'}; }
+
+let _tt;
+function toast(msg,type=''){
+  const el=document.getElementById('toast');
+  el.textContent=msg; el.className='toast show'+(type?' '+type:'');
+  clearTimeout(_tt); _tt=setTimeout(()=>{ el.className='toast'; },2400);
+}
+
+// ═══════════════════ LOAD DATA ═══════════════
+async function loadAll(){
+  const [td,bd,pd]=await Promise.all([
+    req('/transactions?month='+S.month),
+    req('/budget/'+S.month),
+    req('/profile'),
+  ]);
+  S.txns    = td?.transactions||[];
+  S.budget  = bd?.budget||{total:0,cats:{}};
+  S.profile = pd?.profile||null;
+}
+async function reloadMonth(){
+  const [td,bd]=await Promise.all([req('/transactions?month='+S.month),req('/budget/'+S.month)]);
+  S.txns=td?.transactions||[]; S.budget=bd?.budget||{total:0,cats:{}};
+}
+
+// ═══════════════════ STATS ═══════════════════
+function stats(){
+  const inc = S.txns.filter(t=>t.type==='income').reduce((s,t)=>s+t.amount,0);
+  const exp = S.txns.filter(t=>t.type==='expense').reduce((s,t)=>s+t.amount,0);
+  const bal = inc - exp;
+  const savPct = inc>0 ? Math.round(((inc-exp)/inc)*100) : 0;
+  const cats=(S.budget.cats instanceof Map)?Object.fromEntries(S.budget.cats):(S.budget.cats||{});
+  const catSpend={};
+  CATS.forEach(c=>{catSpend[c.id]=0;});
+  S.txns.filter(t=>t.type==='expense').forEach(t=>{ catSpend[t.category]=(catSpend[t.category]||0)+t.amount; });
+  let score=0;
+  const sr=inc>0?(inc-exp)/inc:0;
+  score+=Math.min(40,Math.max(0,Math.round(sr*200)));
+  const bc=CATS.filter(c=>cats[c.id]>0);
+  if(bc.length>0){ const under=bc.filter(c=>(catSpend[c.id]||0)<=cats[c.id]).length; score+=Math.round((under/bc.length)*40); } else score+=20;
+  score+=Math.min(20,S.txns.length*2);
+  score=Math.min(100,Math.max(0,score));
+  const now=new Date();
+  const daysLeft=new Date(now.getFullYear(),now.getMonth()+1,0).getDate()-now.getDate();
+  return {inc,exp,bal,savPct,catSpend,cats,score,daysLeft};
+}
+
+// ═══════════════════ RENDER HOME ═════════════
+function renderHome(){
+  const {inc,exp,bal,savPct,catSpend,cats,score,daysLeft}=stats();
+  document.getElementById('hBal').textContent=₦(bal);
+  document.getElementById('hInc').textContent=₦(inc);
+  document.getElementById('hExp').textContent=₦(exp);
+  const sc=document.getElementById('hScore'); sc.textContent=score;
+  sc.style.color=score>=80?'var(--green)':score>=60?'#f59e0b':'var(--red)';
+  document.getElementById('hDays').textContent=daysLeft;
+  const sv=document.getElementById('hSave'); sv.textContent=savPct+'%';
+  sv.style.color=savPct>=20?'var(--green)':savPct>0?'#f59e0b':'var(--red)';
+
+  const bc=CATS.filter(c=>cats[c.id]>0);
+  const barsEl=document.getElementById('hBars');
+  if(!bc.length){
+    barsEl.innerHTML='<div class="empty"><span class="empty-ico">🗂️</span>No budget set yet.<br><small>Tap <b>Budget</b> below to set one.</small></div>';
+  } else {
+    barsEl.innerHTML=bc.map(c=>{
+      const sp=catSpend[c.id]||0; const tot=cats[c.id];
+      const pct=Math.min(Math.round((sp/tot)*100),100);
+      const cls=pct>=100?'over':pct>=75?'warn':'ok';
+      return `<div class="bbar-item">
+        <span class="bbar-icon">${c.emoji}</span>
+        <div class="bbar-info">
+          <div class="bbar-top"><span class="bbar-name">${c.name}</span><span class="bbar-amt">${₦(sp)} / ${₦(tot)}</span></div>
+          <div class="bbar-track"><div class="bbar-fill ${cls}" style="width:${pct}%"></div></div>
         </div>
-      </div>
+        <span class="bbar-pct ${cls}">${pct}%</span>
+      </div>`;
+    }).join('');
+  }
+
+  const recent=[...S.txns].sort((a,b)=>b.date.localeCompare(a.date)).slice(0,5);
+  const rEl=document.getElementById('hRecent');
+  rEl.innerHTML=recent.length?recent.map(t=>txnRow(t,false)).join('')
+    :'<div class="empty"><span class="empty-ico">💸</span>No transactions yet.<br><small>Tap <b>＋</b> to add your first one!</small></div>';
+}
+
+// ═══════════════════ RENDER HISTORY ══════════
+let hFilter='all';
+function renderHistory(){
+  const list=S.txns.filter(t=>hFilter==='all'||t.type===hFilter).sort((a,b)=>b.date.localeCompare(a.date));
+  const el=document.getElementById('histList');
+  if(!list.length){
+    el.innerHTML='<div class="empty"><span class="empty-ico">📋</span>Nothing here yet.</div>';
+  } else {
+    el.innerHTML=list.map(t=>txnRow(t,true)).join('');
+    el.querySelectorAll('.txn-del').forEach(btn=>{
+      btn.addEventListener('click',async e=>{
+        e.stopPropagation();
+        if(!confirm('Delete this transaction?')) return;
+        try{
+          await req('/transactions/'+btn.dataset.id,{method:'DELETE'});
+          S.txns=S.txns.filter(t=>(t._id||t.id)!==btn.dataset.id);
+          renderHistory(); renderHome(); toast('Deleted','ok');
+        }catch{ toast('Could not delete','error'); }
+      });
+    });
+  }
+}
+
+function txnRow(t, del){
+  const c=catOf(t.category); const id=t._id||t.id;
+  return `<div class="txn-item">
+    <div class="txn-ico ${t.type}">${c.emoji}</div>
+    <div class="txn-info">
+      <div class="txn-desc">${t.description||c.name}</div>
+      <div class="txn-cat">${c.name} · ${dateShort(t.date)}</div>
     </div>
-    <nav>
-      <div class="nav-section-label">Main</div>
-      <button class="nav-item active" data-screen="dashboard"><span class="icon">📊</span><span>Dashboard</span></button>
-      <button class="nav-item" data-screen="tracker"><span class="icon">💸</span><span>Transactions</span></button>
-      <button class="nav-item" data-screen="budget"><span class="icon">🗂️</span><span>Budget Setup</span></button>
-      <div class="nav-section-label" style="margin-top:12px">Intelligence</div>
-      <button class="nav-item" data-screen="predictions"><span class="icon">🔮</span><span>AI Predictions</span></button>
-      <button class="nav-item" data-screen="advice"><span class="icon">🧠</span><span>Smart Advice</span></button>
-      <button class="nav-item" data-screen="chat"><span class="icon">🤖</span><span>AI Chat</span></button>
-      <button class="nav-item" data-screen="foodprices"><span class="icon">🍽️</span><span>Food Prices</span></button>
-      <button class="nav-item" data-screen="reports"><span class="icon">📈</span><span>Reports</span></button>
-      <div class="nav-section-label" style="margin-top:12px">Account</div>
-      <button class="nav-item" data-screen="profile"><span class="icon">👤</span><span>Profile</span></button>
-    </nav>
-    <div class="sidebar-footer">
-      <div class="user-chip" data-screen="profile" id="sidebarChip" style="cursor:pointer">
-        <div class="avatar" id="sidebarAvatar">?</div>
-        <div class="user-info">
-          <div class="user-name" id="sidebarName">Loading...</div>
-          <div class="user-level" id="sidebarLevel">Salem University</div>
-        </div>
-      </div>
-      <button id="logoutBtn" style="width:100%;margin-top:8px;padding:9px 12px;border-radius:12px;border:1.5px solid rgba(248,113,113,0.3);background:rgba(248,113,113,0.08);color:#F87171;font-family:var(--font);font-size:0.8rem;font-weight:600;cursor:pointer;transition:var(--trans);display:flex;align-items:center;justify-content:center;gap:6px;">🚪 Log Out</button>
+    <div class="txn-right">
+      <div class="txn-amt ${t.type}">${t.type==='income'?'+':'-'}${₦(t.amount)}</div>
     </div>
-  </aside>
+    ${del?`<button class="txn-del" data-id="${id}" title="Delete">🗑</button>`:''}
+  </div>`;
+}
 
-  <!-- Main Content -->
-  <div class="main-content">
-    <div class="topbar">
-      <div>
-        <div class="page-title" id="pageTitle">Dashboard</div>
-        <small id="pageSubtitle" class="page-sub">Your financial overview</small>
-      </div>
-      <div class="topbar-right">
-        <div class="month-nav">
-          <button id="monthPrev">‹</button>
-          <span class="month-label" id="monthLabel">Loading...</span>
-          <button id="monthNext">›</button>
-        </div>
-        <button class="btn btn-accent" id="addTxnBtn">＋ Add</button>
-      </div>
+// ═══════════════════ RENDER BUDGET ═══════════
+function renderBudget(){
+  const cats=(S.budget.cats instanceof Map)?Object.fromEntries(S.budget.cats):(S.budget.cats||{});
+  const el=document.getElementById('budCats');
+  el.innerHTML=CATS.map(c=>`
+    <div class="bud-row">
+      <span class="bud-emoji">${c.emoji}</span>
+      <span class="bud-name">${c.name}</span>
+      <input class="bud-input" type="number" min="0" placeholder="₦ 0"
+             data-cat="${c.id}" value="${cats[c.id]||''}" inputmode="numeric" />
     </div>
+  `).join('');
+  const upd=()=>{
+    const tot=[...el.querySelectorAll('.bud-input')].reduce((s,i)=>s+(parseFloat(i.value)||0),0);
+    document.getElementById('budTotal').textContent=₦(tot);
+  };
+  el.querySelectorAll('.bud-input').forEach(i=>i.addEventListener('input',upd));
+  upd();
+}
 
-    <div class="content-area">
+// ═══════════════════ RENDER PROFILE ══════════
+function renderProfile(){
+  const p=S.profile||{};
+  const name=p.name||'';
+  document.getElementById('pName').value  =name;
+  document.getElementById('pDept').value  =p.dept||'';
+  document.getElementById('pLevel').value =p.level||'400 Level';
+  document.getElementById('pMatric').value=p.matric||'';
+  document.getElementById('pIncome').value=p.income||'';
+  document.getElementById('pDispName').textContent=name||'Your Profile';
+  document.getElementById('pDispSub').textContent=(p.dept||'')+(p.dept&&p.level?' · ':'')+(p.level||'');
+  document.getElementById('pAvatar').textContent=name?name[0].toUpperCase():'?';
+}
 
-      <!-- ===== DASHBOARD ===== -->
-      <div class="screen active" id="screen-dashboard">
-        <div class="stat-grid">
-          <div class="stat-card pink">
-            <div class="stat-label">Net Balance</div>
-            <div class="stat-value pink" id="dash-balance">₦0</div>
-            <div class="stat-sub" id="dash-balance-sub">Total available</div>
-          </div>
-          <div class="stat-card teal">
-            <div class="stat-label">Income</div>
-            <div class="stat-value teal" id="dash-income">₦0</div>
-            <div class="stat-sub" id="dash-income-sub">This month</div>
-          </div>
-          <div class="stat-card pink">
-            <div class="stat-label">Expenses</div>
-            <div class="stat-value pink" id="dash-expenses">₦0</div>
-            <div class="stat-sub" id="dash-expenses-sub">This month</div>
-          </div>
-          <div class="stat-card purple">
-            <div class="stat-label">Budget Used</div>
-            <div class="stat-value purple" id="dash-budget-pct">0%</div>
-            <div class="stat-sub" id="dash-budget-sub">Of total budget</div>
-          </div>
-        </div>
-        <div id="dash-alerts"></div>
-        <div class="grid-2" style="margin-bottom:20px">
-          <div class="card">
-            <div class="card-header">
-              <span class="card-title">Category Budgets</span>
-              <button class="btn btn-ghost btn-sm" data-screen="budget">Edit →</button>
-            </div>
-            <div id="cat-progress"></div>
-          </div>
-          <div class="card" style="display:flex;flex-direction:column">
-            <div class="card-header">
-              <span class="card-title">Financial Health</span>
-              <span id="health-badge" class="badge badge-gold">—</span>
-            </div>
-            <div class="health-ring-wrap" style="flex:1">
-              <div class="health-ring">
-                <svg width="120" height="120" viewBox="0 0 120 120">
-                  <circle cx="60" cy="60" r="50" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="10"/>
-                  <circle id="healthArc" cx="60" cy="60" r="50" fill="none"
-                    stroke="url(#healthGrad)" stroke-width="10"
-                    stroke-dasharray="314" stroke-dashoffset="314"
-                    stroke-linecap="round"/>
-                  <defs>
-                    <linearGradient id="healthGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                      <stop offset="0%" stop-color="#F0A500"/>
-                      <stop offset="100%" stop-color="#0ECFB0"/>
-                    </linearGradient>
-                  </defs>
-                </svg>
-                <div class="health-ring-text">
-                  <div class="health-score-num" id="healthScoreNum">—</div>
-                  <div class="health-score-label">Score</div>
-                </div>
-              </div>
-              <div class="health-grade" id="healthGrade">Calculating...</div>
-            </div>
-            <div class="divider" style="margin:12px 0"></div>
-            <div class="health-sub-row">
-              <div><div class="metric-label">Savings Rate</div><div class="metric-value" id="savingsRate">—</div></div>
-              <div><div class="metric-label">Budget Adherence</div><div class="metric-value" id="budgetAdherence">—</div></div>
-            </div>
-          </div>
-        </div>
-        <div class="card">
-          <div class="card-header">
-            <span class="card-title">Recent Transactions</span>
-            <button class="btn btn-ghost btn-sm" data-screen="tracker">View All →</button>
-          </div>
-          <ul class="txn-list" id="dash-recent-txns">
-            <li><div class="empty-state"><div class="empty-icon">📭</div><p>No transactions yet this month</p></div></li>
-          </ul>
-        </div>
-      </div>
+// ═══════════════════ MONTH NAV ════════════════
+function updMonth(){ document.getElementById('mLabel').textContent=mLabel(S.month); }
+async function changeMonth(d){
+  const [y,m]=S.month.split('-').map(Number);
+  const nd=new Date(y,m-1+d,1);
+  S.month=nd.toISOString().slice(0,7);
+  updMonth();
+  await reloadMonth();
+  renderHome(); renderHistory(); renderBudget();
+}
 
-      <!-- ===== TRACKER ===== -->
-      <div class="screen" id="screen-tracker">
-        <div class="tracker-controls">
-          <div class="search-wrap">
-            <span class="search-icon">🔍</span>
-            <input type="text" id="txnSearch" placeholder="Search transactions..." />
-          </div>
-          <div class="filter-row">
-            <select id="txnFilterCat"><option value="">All Categories</option></select>
-            <select id="txnFilterType">
-              <option value="">All Types</option>
-              <option value="income">Income</option>
-              <option value="expense">Expense</option>
-            </select>
-          </div>
-        </div>
-        <div class="card">
-          <div class="card-header">
-            <span class="card-title">All Transactions</span>
-            <span class="badge badge-gold" id="txnCount">0 records</span>
-          </div>
-          <div class="txn-scroll">
-            <ul class="txn-list" id="tracker-txns"></ul>
-          </div>
-        </div>
-      </div>
+// ═══════════════════ NAVIGATION ══════════════
+function goTo(name){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('screen-'+name).classList.add('active');
+  document.querySelector(`.nav-btn[data-s="${name}"]`)?.classList.add('active');
+}
 
-      <!-- ===== BUDGET ===== -->
-      <div class="screen" id="screen-budget">
-        <div class="grid-2">
-          <div class="card">
-            <div class="card-header">
-              <span class="card-title">Monthly Allocations</span>
-              <button class="btn btn-gold btn-sm" id="saveBudgetBtn">Save Budget</button>
-            </div>
-            <div class="form-group" style="margin-bottom:16px">
-              <label for="totalBudgetInput">Total Monthly Budget (₦)</label>
-              <input type="number" id="totalBudgetInput" placeholder="e.g. 50000" />
-            </div>
-            <div class="budget-cat-grid" id="budgetCatGrid"></div>
-          </div>
-          <div>
-            <div class="card" style="margin-bottom:16px">
-              <div class="card-header"><span class="card-title">Budget Summary</span></div>
-              <div id="budgetSummary"></div>
-            </div>
-            <div class="card">
-              <div class="card-header"><span class="card-title">Allocation Chart</span></div>
-              <div class="chart-wrap"><canvas id="budgetPieChart"></canvas></div>
-            </div>
-          </div>
-        </div>
-      </div>
+// ═══════════════════ MODAL ═══════════════════
+let mType='expense', mCat='feeding';
 
-      <!-- ===== PREDICTIONS ===== -->
-      <div class="screen" id="screen-predictions">
-        <div class="alert alert-info" style="margin-bottom:20px">
-          🔮 <div><strong>AI Prediction Engine</strong> — Predictions use linear regression on your past spending. Accuracy improves with more months of history.</div>
-        </div>
-        <div id="pred-data-warn"></div>
-        <div class="stat-grid" style="grid-template-columns:repeat(3,1fr);margin-bottom:24px">
-          <div class="stat-card pink">
-            <div class="stat-label">Predicted Total (Next Month)</div>
-            <div class="stat-value pink" id="pred-total">₦—</div>
-            <div class="stat-sub" id="pred-vs-budget">vs. current budget</div>
-          </div>
-          <div class="stat-card teal">
-            <div class="stat-label">Prediction Confidence</div>
-            <div class="stat-value teal" id="pred-confidence">—%</div>
-            <div class="stat-sub">Based on months of data</div>
-          </div>
-          <div class="stat-card purple">
-            <div class="stat-label">Biggest Risk Category</div>
-            <div class="stat-value purple" id="pred-risk">—</div>
-            <div class="stat-sub" id="pred-risk-amt">—</div>
-          </div>
-        </div>
-        <div class="pred-grid" id="pred-grid"></div>
-        <div class="card" style="margin-top:24px">
-          <div class="card-header"><span class="card-title">Spending Forecast — Next 3 Months</span></div>
-          <div class="chart-wrap"><canvas id="forecastChart"></canvas></div>
-        </div>
-      </div>
+function openModal(type){
+  mType=type||'expense'; mCat=mType==='income'?'allowance':'feeding';
+  setType(mType);
+  document.getElementById('mAmt').value='';
+  document.getElementById('mDesc').value='';
+  document.getElementById('mDate').value=today();
+  document.getElementById('modal').classList.add('open');
+  setTimeout(()=>document.getElementById('mAmt').focus(),360);
+}
+function closeModal(){ document.getElementById('modal').classList.remove('open'); }
 
-      <!-- ===== ADVICE ===== -->
-      <div class="screen" id="screen-advice">
-        <div class="advice-header">
-          <div>
-            <div class="section-title">Personalized Financial Advice</div>
-            <div class="section-sub">Generated from your spending patterns and financial health</div>
-          </div>
-          <button class="btn btn-ghost btn-sm" id="refreshAdviceBtn">↻ Refresh</button>
-        </div>
-        <div class="advice-grid" id="advice-grid"></div>
-        <div class="card" style="margin-top:20px">
-          <div class="card-header"><span class="card-title">Your Spending DNA</span></div>
-          <div class="chart-wrap"><canvas id="spendingRadar"></canvas></div>
-        </div>
-      </div>
+function setType(t){
+  mType=t;
+  const iEl=document.getElementById('tIncome'), eEl=document.getElementById('tExpense');
+  iEl.className='tbtn'+(t==='income'?' ti':'');
+  eEl.className='tbtn'+(t==='expense'?' te':'');
+  document.getElementById('mCatField').style.display=t==='expense'?'':'none';
+  document.getElementById('mSrcField').style.display=t==='income'?'':'none';
+  const sub=document.getElementById('mSubmit');
+  sub.textContent=t==='income'?'Add Money In ✓':'Add Spending ✓';
+  sub.className='msubmit '+t;
+  mCat=t==='income'?'allowance':'feeding';
+  renderChips();
+}
 
-      <!-- ===== REPORTS ===== -->
-      <div class="screen" id="screen-reports">
-        <div class="tabs">
-          <button class="tab-btn active" data-tab="overview">Overview</button>
-          <button class="tab-btn" data-tab="monthly">Monthly Trend</button>
-          <button class="tab-btn" data-tab="categories">By Category</button>
-        </div>
-        <div class="tab-content active" id="tab-overview">
-          <div class="stat-grid" style="grid-template-columns:repeat(3,1fr);margin-bottom:24px" id="report-stats"></div>
-          <div class="grid-2">
-            <div class="card">
-              <div class="card-header"><span class="card-title">Income vs Expenses</span></div>
-              <div class="chart-wrap"><canvas id="incomeExpenseChart"></canvas></div>
-            </div>
-            <div class="card">
-              <div class="card-header"><span class="card-title">Spending Distribution</span></div>
-              <div class="chart-wrap"><canvas id="reportPieChart"></canvas></div>
-            </div>
-          </div>
-        </div>
-        <div class="tab-content" id="tab-monthly">
-          <div class="card">
-            <div class="card-header"><span class="card-title">Monthly Spending Trend</span></div>
-            <div class="chart-wrap" style="height:280px"><canvas id="monthlyTrendChart"></canvas></div>
-          </div>
-        </div>
-        <div class="tab-content" id="tab-categories">
-          <div class="card">
-            <div class="card-header"><span class="card-title">Category Breakdown</span></div>
-            <div id="cat-breakdown-list"></div>
-          </div>
-        </div>
-      </div>
+function renderChips(){
+  const list=mType==='expense'?CATS:SRCS;
+  const gid=mType==='expense'?'catGrid':'srcGrid';
+  document.getElementById(gid).innerHTML=list.map(c=>`
+    <div class="cchip${mCat===c.id?' sel':''}" data-id="${c.id}">
+      <span class="cchip-ico">${c.emoji}</span>
+      <span class="cchip-name">${c.name}</span>
+    </div>`).join('');
+  document.getElementById(gid).querySelectorAll('.cchip').forEach(el=>{
+    el.addEventListener('click',()=>{ mCat=el.dataset.id; renderChips(); });
+  });
+}
 
-      <!-- ===== PROFILE ===== -->
-      <div class="screen" id="screen-profile">
-        <div class="grid-2">
-          <div class="card">
-            <div class="card-header">
-              <span class="card-title">Student Information</span>
-              <button class="btn btn-gold btn-sm" id="saveProfileBtn">Save</button>
-            </div>
-            <div class="form-grid">
-              <div class="form-group"><label for="p_name">Full Name</label><input type="text" id="p_name" /></div>
-              <div class="form-group"><label for="p_matric">Matric Number</label><input type="text" id="p_matric" /></div>
-              <div class="form-group"><label for="p_dept">Department</label><input type="text" id="p_dept" /></div>
-              <div class="form-group">
-                <label for="p_level">Level</label>
-                <select id="p_level">
-                  <option>100 Level</option><option>200 Level</option>
-                  <option>300 Level</option><option>400 Level</option><option>500 Level</option>
-                </select>
-              </div>
-              <div class="form-group full">
-                <label for="p_income">Monthly Income / Allowance (₦)</label>
-                <input type="number" id="p_income" />
-              </div>
-              <div class="form-group full">
-                <label for="p_email">Email Address (for notifications)</label>
-                <input type="email" id="p_email" placeholder="your.email@example.com" />
-              </div>
-            </div>
-          </div>
-          <div>
-            <div class="card" style="margin-bottom:16px">
-              <div class="card-header"><span class="card-title">App Statistics</span></div>
-              <div id="app-stats"></div>
-            </div>
-            <div class="card" style="margin-bottom:16px">
-              <div class="card-header"><span class="card-title">Email Notifications</span></div>
-              <div class="notif-actions">
-                <button class="btn btn-ghost" id="sendBudgetAlertBtn">📧 Send Budget Alert</button>
-                <button class="btn btn-ghost" id="sendMonthlyReportBtn">📊 Send Monthly Report</button>
-                <button class="btn btn-ghost" id="sendWeeklySummaryBtn">📅 Send Weekly Summary</button>
-              </div>
-            </div>
-            <div class="card">
-              <div class="card-header"><span class="card-title">Data Management</span></div>
-              <div class="data-actions">
-                <button class="btn btn-ghost" id="exportDataBtn">📤 Export Data (JSON)</button>
-                <button class="btn btn-danger" id="resetDataBtn">🗑️ Reset All Data</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+// ═══════════════════ BOOT ════════════════════
+window.addEventListener('DOMContentLoaded',async()=>{
+  if(!localStorage.getItem('ibeps_token')){ location.href='/login'; return; }
+  try{ await loadAll(); }
+  catch(e){ toast('Cannot connect to server','error'); return; }
 
+  document.getElementById('app').style.display='flex';
+  updMonth(); renderHome(); renderProfile();
 
-      <!-- ===== AI CHAT ===== -->
-      <div class="screen" id="screen-chat">
-        <div class="chat-shell">
+  // Nav
+  document.querySelectorAll('.nav-btn[data-s]').forEach(b=>{
+    b.addEventListener('click',()=>{
+      const s=b.dataset.s; goTo(s);
+      if(s==='history'){ renderHistory(); }
+      if(s==='budget')  { renderBudget(); }
+      if(s==='profile') { renderProfile(); }
+    });
+  });
 
-          <!-- Sidebar: quick actions -->
-          <aside class="chat-sidebar">
-            <div class="chat-sidebar-title">Quick Ask</div>
+  // Quick links on home
+  document.getElementById('goBudget').addEventListener('click',()=>{ goTo('budget');  renderBudget(); });
+  document.getElementById('goHistory').addEventListener('click',()=>{ goTo('history'); renderHistory(); });
 
-            <div class="quick-prompts">
-              <button class="quick-btn" data-prompt="Based on my remaining feeding budget, exactly how much can I spend on food today and for each remaining day this month?">
-                🍽️ My daily food budget
-              </button>
-              <button class="quick-btn" data-prompt="Looking at the food prices I have set, what is the cheapest combination of breakfast, lunch and dinner I can have today and still eat well?">
-                💰 Cheapest full day
-              </button>
-              <button class="quick-btn" data-prompt="Create a 5-day meal plan for me using only the food items in my price list. Show the price of each meal and the daily total. Stay within my daily feeding allowance.">
-                📅 5-day meal plan
-              </button>
-              <button class="quick-btn" data-prompt="Compare all the lunch options in my food price list from cheapest to most expensive. Which gives the best value for money?">
-                ⚖️ Compare lunch options
-              </button>
-              <button class="quick-btn" data-prompt="Which of my spending categories is most over budget this month? Give me specific advice on what to cut.">
-                ✂️ Where to cut costs
-              </button>
-              <button class="quick-btn" data-prompt="I only have ₦2000 left for food this week. Using only items in my price list, what should I eat each day to make it last?">
-                📊 Stretch ₦2000
-              </button>
-              <button class="quick-btn" data-prompt="What are all the breakfast options in my food price list? Which is most filling for the price?">
-                🥖 Breakfast options
-              </button>
-              <button class="quick-btn" data-prompt="What is my financial health score this month and what is the single most impactful change I can make this week?">
-                ❤️ Financial health
-              </button>
-            </div>
+  // Month nav
+  document.getElementById('mPrev').addEventListener('click',()=>changeMonth(-1));
+  document.getElementById('mNext').addEventListener('click',()=>changeMonth(+1));
 
-            <div class="chat-sidebar-title" style="margin-top:20px">AI Tip of the Day</div>
-            <div class="tip-card" id="quickTipCard">
-              <div class="tip-loading">
-                <div class="tip-spinner"></div>
-                <span>Loading tip…</span>
-              </div>
-            </div>
+  // Filter tabs
+  document.querySelectorAll('.ftab').forEach(tab=>{
+    tab.addEventListener('click',()=>{
+      document.querySelectorAll('.ftab').forEach(t=>t.classList.remove('active'));
+      tab.classList.add('active'); hFilter=tab.dataset.f; renderHistory();
+    });
+  });
 
-            <button class="btn btn-ghost" id="clearChatBtn" style="width:100%;margin-top:16px;font-size:0.78rem">
-              🗑️ Clear conversation
-            </button>
-          </aside>
+  // Open modal
+  document.getElementById('openModal').addEventListener('click',()=>openModal('expense'));
 
-          <!-- Main chat area -->
-          <div class="chat-main">
-            <div class="chat-messages" id="chatMessages">
-              <!-- Welcome message injected by JS -->
-            </div>
+  // Modal type toggle
+  document.getElementById('tIncome').addEventListener('click',()=>setType('income'));
+  document.getElementById('tExpense').addEventListener('click',()=>setType('expense'));
 
-            <div class="chat-input-area">
-              <div class="chat-input-wrap">
-                <textarea
-                  id="chatInput"
-                  class="chat-input"
-                  placeholder="Ask about food prices, budgeting tips, meal plans…"
-                  rows="1"
-                ></textarea>
-                <button class="chat-send-btn" id="chatSendBtn" title="Send">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-                </button>
-              </div>
-              <div class="chat-footer-note">
-                Powered by Groq · Llama 3.3 70B · Knows your live budget data
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+  // Close on backdrop click
+  document.getElementById('modal').addEventListener('click',e=>{ if(e.target===document.getElementById('modal')) closeModal(); });
 
+  // Submit transaction
+  document.getElementById('mSubmit').addEventListener('click',async()=>{
+    const amt=parseFloat(document.getElementById('mAmt').value);
+    const desc=document.getElementById('mDesc').value.trim();
+    const date=document.getElementById('mDate').value;
+    if(!amt||amt<=0){ toast('Enter a valid amount','error'); return; }
+    if(!date){ toast('Pick a date','error'); return; }
+    const btn=document.getElementById('mSubmit');
+    btn.disabled=true; btn.textContent='Saving…';
+    try{
+      const d=await req('/transactions',{method:'POST',body:{
+        type:mType, category:mCat, amount:amt,
+        description:desc||catOf(mCat).name, date
+      }});
+      S.txns.unshift(d.transaction);
+      closeModal(); renderHome();
+      toast(mType==='income'?'✓ Money added!':'✓ Spending logged!','ok');
+    }catch(e){ toast(e.message||'Failed','error'); }
+    finally{ btn.disabled=false; setType(mType); }
+  });
 
-      <!-- ===== FOOD PRICES ===== -->
-      <div class="screen" id="screen-foodprices">
+  // Save budget
+  document.getElementById('budSave').addEventListener('click',async()=>{
+    const inputs=document.querySelectorAll('.bud-input');
+    const cats={}; let total=0;
+    inputs.forEach(i=>{ const v=parseFloat(i.value)||0; cats[i.dataset.cat]=v; total+=v; });
+    const btn=document.getElementById('budSave');
+    btn.disabled=true; btn.textContent='Saving…';
+    try{
+      const d=await req('/budget/'+S.month,{method:'PUT',body:{total,cats}});
+      S.budget=d.budget; renderHome(); renderBudget(); toast('✓ Budget saved!','ok');
+    }catch{ toast('Could not save','error'); }
+    finally{ btn.disabled=false; btn.textContent='💾 Save Budget'; }
+  });
 
-        <div class="fp-toolbar">
-          <div class="fp-filter-tabs" id="fpFilterTabs">
-            <button class="fp-tab active" data-cat="all">All</button>
-            <button class="fp-tab" data-cat="breakfast">🥖 Breakfast</button>
-            <button class="fp-tab" data-cat="lunch">🍚 Lunch</button>
-            <button class="fp-tab" data-cat="dinner">🌙 Dinner</button>
-            <button class="fp-tab" data-cat="snacks">🍪 Snacks</button>
-            <button class="fp-tab" data-cat="drinks">🥤 Drinks</button>
-          </div>
-          <div class="fp-actions">
-            <button class="btn btn-ghost btn-sm" id="fpResetBtn">↺ Reset to defaults</button>
-            <button class="btn btn-gold btn-sm" id="fpAddBtn">＋ Add Item</button>
-          </div>
-        </div>
+  // Save profile
+  document.getElementById('pSave').addEventListener('click',async()=>{
+    const name=document.getElementById('pName').value.trim();
+    if(!name){ toast('Enter your name','error'); return; }
+    const btn=document.getElementById('pSave');
+    btn.disabled=true; btn.textContent='Saving…';
+    try{
+      const d=await req('/profile',{method:'PUT',body:{
+        name, dept:document.getElementById('pDept').value.trim(),
+        level:document.getElementById('pLevel').value,
+        matric:document.getElementById('pMatric').value.trim(),
+        income:parseFloat(document.getElementById('pIncome').value)||0,
+      }});
+      S.profile=d.profile; renderProfile(); toast('✓ Saved!','ok');
+    }catch{ toast('Could not save','error'); }
+    finally{ btn.disabled=false; btn.textContent='💾 Save Profile'; }
+  });
 
-        <!-- Summary bar -->
-        <div class="fp-summary" id="fpSummary"></div>
+  // Logout
+  document.getElementById('logoutBtn').addEventListener('click',()=>{
+    localStorage.removeItem('ibeps_token'); localStorage.removeItem('ibeps_user');
+    location.href='/';
+  });
 
-        <!-- Price grid -->
-        <div class="fp-grid" id="fpGrid"></div>
-
-      </div>
-
-    </div><!-- /content-area -->
-  </div><!-- /main-content -->
-</div><!-- /app-shell -->
-
-<!-- ===== ADD / EDIT TRANSACTION MODAL ===== -->
-<div class="modal-overlay" id="addTxnModal">
-  <div class="modal">
-    <div class="modal-header">
-      <span class="modal-title" id="txnModalTitle">Add Transaction</span>
-      <button class="modal-close" data-close="addTxnModal">✕</button>
-    </div>
-    <input type="hidden" id="txnEditId" />
-    <div style="margin-bottom:16px">
-      <label style="display:block;margin-bottom:6px">Transaction Type</label>
-      <div class="toggle-group">
-        <button class="toggle-btn expense active" id="typeExpense" data-type="expense">💸 Expense</button>
-        <button class="toggle-btn income" id="typeIncome" data-type="income">💰 Income</button>
-      </div>
-    </div>
-    <div class="form-grid">
-      <div class="form-group">
-        <label for="txnAmount">Amount (₦)</label>
-        <input type="number" id="txnAmount" placeholder="e.g. 2500" min="1" />
-      </div>
-      <div class="form-group">
-        <label for="txnDate">Date</label>
-        <input type="date" id="txnDate" />
-      </div>
-      <div class="form-group">
-        <label for="txnCategory">Category</label>
-        <select id="txnCategory"></select>
-      </div>
-      <div class="form-group">
-        <label for="txnDesc">Description</label>
-        <input type="text" id="txnDesc" placeholder="e.g. Mama Put lunch" />
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-ghost" data-close="addTxnModal">Cancel</button>
-      <button class="btn btn-gold" id="saveTxnBtn">Save Transaction</button>
-    </div>
-  </div>
-</div>
-
-
-<!-- ===== FOOD PRICE ADD / EDIT MODAL ===== -->
-<div class="modal-overlay" id="fpModal">
-  <div class="modal">
-    <div class="modal-header">
-      <span class="modal-title" id="fpModalTitle">Add Food Item</span>
-      <button class="modal-close" data-close="fpModal">✕</button>
-    </div>
-    <input type="hidden" id="fpEditId" />
-    <div class="form-grid">
-      <div class="form-group">
-        <label for="fp_emoji">Emoji</label>
-        <input type="text" id="fp_emoji" placeholder="🍚" maxlength="4" style="font-size:1.4rem;text-align:center" />
-      </div>
-      <div class="form-group">
-        <label for="fp_category">Category</label>
-        <select id="fp_category">
-          <option value="breakfast">🥖 Breakfast</option>
-          <option value="lunch">🍚 Lunch</option>
-          <option value="dinner">🌙 Dinner</option>
-          <option value="snacks">🍪 Snacks</option>
-          <option value="drinks">🥤 Drinks</option>
-        </select>
-      </div>
-      <div class="form-group full">
-        <label for="fp_name">Item Name</label>
-        <input type="text" id="fp_name" placeholder="e.g. Rice & Stew (big)" />
-      </div>
-      <div class="form-group">
-        <label for="fp_price">Price (₦)</label>
-        <input type="number" id="fp_price" placeholder="e.g. 500" min="0" />
-      </div>
-      <div class="form-group">
-        <label for="fp_unit">Unit / Serving</label>
-        <input type="text" id="fp_unit" placeholder="e.g. plate, cup, piece" />
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-ghost" data-close="fpModal">Cancel</button>
-      <button class="btn btn-gold" id="fpSaveItemBtn">Save Item</button>
-    </div>
-  </div>
-</div>
-
-<!-- Chart.js -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-
-<!-- App modules — order matters -->
-<script src="/js/config.js"></script>
-<script src="/js/utils.js"></script>
-<script src="/js/api.js"></script>
-<script src="/js/state.js"></script>
-<script src="/js/navigation.js"></script>
-<script src="/js/onboarding.js"></script>
-<script src="/js/dashboard.js"></script>
-<script src="/js/tracker.js"></script>
-<script src="/js/budget.js"></script>
-<script src="/js/predictions.js"></script>
-<script src="/js/advice.js"></script>
-<script src="/js/reports.js"></script>
-<script src="/js/profile.js"></script>
-<script src="/js/chat.js"></script>
-<script src="/js/foodPrices.js"></script>
-<script src="/js/app.js"></script>
-
-<!-- ── Mobile Bottom Navigation ── -->
-<nav class="mobile-nav" id="mobileNav">
-  <div class="mobile-nav-grid">
-    <button class="mobile-nav-btn active" data-screen="dashboard">
-      <span class="m-icon">📊</span><span>Dashboard</span>
-    </button>
-    <button class="mobile-nav-btn" data-screen="tracker">
-      <span class="m-icon">💸</span><span>Spend</span>
-    </button>
-    <button class="mobile-nav-btn" data-screen="chat">
-      <span class="m-icon">🤖</span><span>AI</span>
-    </button>
-    <button class="mobile-nav-btn" data-screen="foodprices">
-      <span class="m-icon">🍽️</span><span>Prices</span>
-    </button>
-    <button class="mobile-nav-btn" data-screen="profile">
-      <span class="m-icon">👤</span><span>Profile</span>
-    </button>
-  </div>
-</nav>
+  // Keyboard ESC
+  document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeModal(); });
+});
+</script>
 </body>
 </html>

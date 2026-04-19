@@ -286,6 +286,7 @@
       <div class="land-logo-icon">💡</div>
       <div>
         <div class="land-logo-text"><span>IB</span>EPS</div>
+        <div class="land-logo-sub">Salem University</div>
       </div>
     </a>
     <div class="nav-links">
@@ -293,8 +294,8 @@
       <a href="#how-it-works" class="nav-link">How It Works</a>
     </div>
     <div class="nav-cta">
-      <a href="/login.html" class="btn btn-ghost btn-sm">Log In</a>
-      <a href="/register.html" class="btn btn-accent btn-sm">Get Started →</a>
+      <a href="/login" class="btn btn-ghost btn-sm">Log In</a>
+      <a href="/register" class="btn btn-accent btn-sm">Get Started →</a>
     </div>
   </nav>
 
@@ -302,7 +303,7 @@
   <section class="hero">
     <div class="hero-inner">
       <div class="hero-content">
-        <div class="hero-badge"><span class="dot"></span> Built for Students</div>
+        <div class="hero-badge"><span class="dot"></span> Built for Salem University Students</div>
         <h1 class="hero-title">
           Budget smarter,<br>
           spend <span class="grad">wiser</span>,<br>
@@ -312,8 +313,8 @@
           IBEPS is your AI-powered financial companion that tracks spending, predicts expenses, and gives you personalised advice — so your money works as hard as you do.
         </p>
         <div class="hero-actions">
-          <a href="/register.html" class="btn btn-accent">Create Free Account 🚀</a>
-          <a href="/login.html" class="btn btn-ghost">I have an account</a>
+          <a href="/register" class="btn btn-accent">Create Free Account 🚀</a>
+          <a href="/login" class="btn btn-ghost">I have an account</a>
         </div>
         <div class="hero-stats">
           <div>
@@ -459,15 +460,15 @@
       <h2 class="cta-title">Ready to take control<br>of your finances?</h2>
       <p class="cta-sub">Join students who are already budgeting smarter with IBEPS.<br>Free forever — no credit card needed.</p>
       <div class="cta-actions">
-        <a href="/register.html" class="btn btn-accent">Create Free Account 🚀</a>
-        <a href="/login.html" class="btn btn-ghost">Log In</a>
+        <a href="/register" class="btn btn-accent">Create Free Account 🚀</a>
+        <a href="/login" class="btn btn-ghost">Log In</a>
       </div>
     </div>
   </div>
 
   <!-- Footer -->
   <footer>
-    <div class="footer-copy">© 2026 IBEPS · Built with 💡</div>
+    <div class="footer-copy">© 2026 IBEPS · Salem University · Built with 💡</div>
     <div class="footer-links">
       <a href="#" class="footer-link">Privacy</a>
       <a href="#" class="footer-link">Terms</a>
@@ -489,15 +490,15 @@
       });
     });
 
-    // Show "Go to Dashboard" in nav if already logged in (no forced redirect)
+    // If already logged in, swap the CTA buttons to show "Go to Dashboard"
     const token = localStorage.getItem('ibeps_token');
     if (token) {
-      document.querySelectorAll('a[href="/login.html"]').forEach(a => {
-        a.textContent = 'Go to Dashboard →';
-        a.href = '/app';
+      document.querySelectorAll('a[href="/register"]').forEach(el => {
+        el.textContent = '🏠 Go to Dashboard';
+        el.href = '/app';
       });
-      document.querySelectorAll('a[href="/register.html"]').forEach(a => {
-        a.style.display = 'none';
+      document.querySelectorAll('a[href="/login"]').forEach(el => {
+        el.style.display = 'none';
       });
     }
   </script>

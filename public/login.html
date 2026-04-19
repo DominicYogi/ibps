@@ -143,9 +143,9 @@
 <body>
   <div class="auth-page">
     <div class="auth-wrap">
-      <a href="/landing.html" class="back-home">← Back to home</a>
+      <a href="/" class="back-home">← Back to home</a>
 
-      <a href="/landing.html" class="auth-logo">
+      <a href="/" class="auth-logo">
         <div class="auth-logo-icon">💡</div>
         <div>
           <div class="auth-logo-text">IBEPS</div>
@@ -183,7 +183,7 @@
         </div>
 
         <div class="auth-footer">
-          Don't have an account? <a href="/register.html">Create one →</a>
+          Don't have an account? <a href="/register">Create one →</a>
         </div>
       </div>
     </div>
@@ -191,7 +191,7 @@
 
   <script>
     // Redirect if already logged in
-    if (localStorage.getItem('ibeps_token')) window.location.href = '/index.html';
+    if (localStorage.getItem('ibeps_token')) window.location.href = '/app';
 
     const emailInput    = document.getElementById('loginEmail');
     const passwordInput = document.getElementById('loginPassword');
@@ -252,7 +252,7 @@
         showSuccess('Login successful! Redirecting…');
         localStorage.setItem('ibeps_token', data.token);
         localStorage.setItem('ibeps_user', JSON.stringify(data.user));
-        setTimeout(() => { window.location.href = '/index.html'; }, 800);
+        setTimeout(() => { window.location.href = '/app'; }, 800);
       } catch (err) {
         showError('Network error. Please check your connection.');
       } finally {
