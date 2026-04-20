@@ -5,7 +5,7 @@ window.addEventListener('DOMContentLoaded', async () => {
   // ── Auth guard: if no token, redirect to login ─────────
   const token = localStorage.getItem('ibeps_token');
   if (!token) {
-    window.location.href = '/login.html';
+    window.location.href = '/login';
     return;
   }
 
@@ -32,7 +32,7 @@ window.addEventListener('DOMContentLoaded', async () => {
   try {
     profileResult = await profileAPI.get();
   } catch (err) {
-    if (err.message.includes('401')) { window.location.href = '/login.html'; return; }
+    if (err.message.includes('401')) { window.location.href = '/login'; return; }
     showError('Could not connect to server.');
     return;
   }
@@ -91,7 +91,7 @@ async function initApp() {
     logoutBtn.addEventListener('click', () => {
       localStorage.removeItem('ibeps_token');
       localStorage.removeItem('ibeps_user');
-      window.location.href = '/login.html';
+      window.location.href = '/login';
     });
   }
 }

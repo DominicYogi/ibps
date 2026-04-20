@@ -22,7 +22,7 @@ async function apiFetch(path, options = {}) {
   if (res.status === 401) {
     localStorage.removeItem('ibeps_token');
     localStorage.removeItem('ibeps_user');
-    window.location.href = '/login.html';
+    window.location.href = '/login';
     return;
   }
 
