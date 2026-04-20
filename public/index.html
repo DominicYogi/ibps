@@ -591,7 +591,7 @@ async function req(path, opts={}){
 }
 
 // ═══════════════════ HELPERS ═════════════════
-function ₦(n){ return '₦'+(Math.round(n)||0).toLocaleString('en-NG'); }
+function naira(n){ return '₦'+(Math.round(n)||0).toLocaleString('en-NG'); }
 function dateShort(d){ return new Date(d+'T00:00:00').toLocaleDateString('en-NG',{day:'numeric',month:'short'}); }
 function mLabel(ym){ return new Date(ym+'-01').toLocaleDateString('en-NG',{month:'long',year:'numeric'}); }
 function catOf(id){ return CATS.find(c=>c.id===id)||SRCS.find(c=>c.id===id)||{name:id,emoji:'💰'}; }
@@ -644,9 +644,9 @@ function stats(){
 // ═══════════════════ RENDER HOME ═════════════
 function renderHome(){
   const {inc,exp,bal,savPct,catSpend,cats,score,daysLeft}=stats();
-  document.getElementById('hBal').textContent=₦(bal);
-  document.getElementById('hInc').textContent=₦(inc);
-  document.getElementById('hExp').textContent=₦(exp);
+  document.getElementById('hBal').textContent=naira(bal);
+  document.getElementById('hInc').textContent=naira(inc);
+  document.getElementById('hExp').textContent=naira(exp);
   const sc=document.getElementById('hScore'); sc.textContent=score;
   sc.style.color=score>=80?'var(--green)':score>=60?'#f59e0b':'var(--red)';
   document.getElementById('hDays').textContent=daysLeft;
@@ -665,7 +665,7 @@ function renderHome(){
       return `<div class="bbar-item">
         <span class="bbar-icon">${c.emoji}</span>
         <div class="bbar-info">
-          <div class="bbar-top"><span class="bbar-name">${c.name}</span><span class="bbar-amt">${₦(sp)} / ${₦(tot)}</span></div>
+          <div class="bbar-top"><span class="bbar-name">${c.name}</span><span class="bbar-amt">${naira(sp)} / ${naira(tot)}</span></div>
           <div class="bbar-track"><div class="bbar-fill ${cls}" style="width:${pct}%"></div></div>
         </div>
         <span class="bbar-pct ${cls}">${pct}%</span>
@@ -711,7 +711,7 @@ function txnRow(t, del){
       <div class="txn-cat">${c.name} · ${dateShort(t.date)}</div>
     </div>
     <div class="txn-right">
-      <div class="txn-amt ${t.type}">${t.type==='income'?'+':'-'}${₦(t.amount)}</div>
+      <div class="txn-amt ${t.type}">${t.type==='income'?'+':'-'}${naira(t.amount)}</div>
     </div>
     ${del?`<button class="txn-del" data-id="${id}" title="Delete">🗑</button>`:''}
   </div>`;
@@ -731,7 +731,7 @@ function renderBudget(){
   `).join('');
   const upd=()=>{
     const tot=[...el.querySelectorAll('.bud-input')].reduce((s,i)=>s+(parseFloat(i.value)||0),0);
-    document.getElementById('budTotal').textContent=₦(tot);
+    document.getElementById('budTotal').textContent=naira(tot);
   };
   el.querySelectorAll('.bud-input').forEach(i=>i.addEventListener('input',upd));
   upd();
