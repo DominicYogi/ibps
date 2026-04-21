@@ -21,12 +21,8 @@ function showScreen(name) {
     dashboard:   renderDashboard,
     tracker:     renderTrackerScreen,
     budget:      renderBudgetScreen,
-    predictions: renderPredictions,
-    advice:      renderAdvice,
-    reports:     renderReports,
     profile:     renderProfileScreen,
     chat:        renderChatScreen,
-    foodprices:  renderFoodPricesScreen,
   };
   if (renderers[name]) renderers[name]();
 }

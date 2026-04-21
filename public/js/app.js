@@ -74,10 +74,8 @@ async function initApp() {
   // Wire up all navigation and module event listeners
   initNavigation();
   initTracker();
-  initAdvice();
   initProfile();
   initChat();
-  initFoodPrices();
 
   // Update sidebar user info
   updateSidebar();

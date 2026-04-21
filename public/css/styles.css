@@ -1081,3 +1081,46 @@ select option { background:#F0F4FF; color:var(--text); }
   .pred-grid { grid-template-columns:1fr; }
   .fp-summary { grid-template-columns:1fr 1fr; }
 }
+
+/* ═══════════════════════════════════════════════════════════
+   CHAT — QUICK PILLS (welcome screen shortcuts)
+═══════════════════════════════════════════════════════════ */
+.quick-pill {
+  background: rgba(139,92,246,0.12); border: 1.5px solid rgba(139,92,246,0.25);
+  color: var(--accent, #8B5CF6); border-radius: 20px; padding: 6px 14px;
+  font-family: var(--font); font-size: 0.76rem; font-weight: 600;
+  cursor: pointer; transition: var(--trans); white-space: nowrap;
+}
+.quick-pill:hover { background: rgba(139,92,246,0.22); transform: translateY(-1px); }
+
+/* ═══════════════════════════════════════════════════════════
+   EMAIL REMINDER PANEL
+═══════════════════════════════════════════════════════════ */
+.email-reminder-panel {
+  background: var(--glass, rgba(255,255,255,0.7));
+  border: 1.5px solid var(--glass-border, rgba(255,255,255,0.6));
+  border-radius: 14px; padding: 14px; backdrop-filter: blur(16px);
+}
+.erp-title {
+  font-size: 0.75rem; font-weight: 700; color: var(--text, #1E1B4B);
+  letter-spacing: .04em; text-transform: uppercase; margin-bottom: 8px;
+}
+.erp-note {
+  font-size: 0.75rem; color: var(--text2, #6B7280); margin-bottom: 10px; line-height: 1.4;
+}
+.erp-note a { color: var(--accent, #8B5CF6); text-decoration: none; }
+.erp-note a:hover { text-decoration: underline; }
+.erp-btns { display: flex; flex-direction: column; gap: 6px; }
+.erp-btn {
+  width: 100%; padding: 8px 12px; border-radius: 10px;
+  border: 1.5px solid rgba(14,207,176,0.3);
+  background: rgba(14,207,176,0.08); color: var(--teal, #0ECFB0);
+  font-family: var(--font); font-size: 0.75rem; font-weight: 600;
+  cursor: pointer; transition: var(--trans); text-align: left;
+}
+.erp-btn:hover { background: rgba(14,207,176,0.18); transform: translateX(2px); }
+.erp-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+.erp-status {
+  font-size: 0.75rem; font-weight: 600; margin-top: 8px;
+  min-height: 18px; transition: color 0.3s;
+}

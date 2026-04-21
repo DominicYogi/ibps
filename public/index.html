@@ -97,12 +97,8 @@
       <button class="nav-item active" data-screen="dashboard"><span class="icon">📊</span><span>Dashboard</span></button>
       <button class="nav-item" data-screen="tracker"><span class="icon">💸</span><span>Transactions</span></button>
       <button class="nav-item" data-screen="budget"><span class="icon">🗂️</span><span>Budget Setup</span></button>
-      <div class="nav-section-label" style="margin-top:12px">Intelligence</div>
-      <button class="nav-item" data-screen="predictions"><span class="icon">🔮</span><span>AI Predictions</span></button>
-      <button class="nav-item" data-screen="advice"><span class="icon">🧠</span><span>Smart Advice</span></button>
-      <button class="nav-item" data-screen="chat"><span class="icon">🤖</span><span>AI Chat</span></button>
-      <button class="nav-item" data-screen="foodprices"><span class="icon">🍽️</span><span>Food Prices</span></button>
-      <button class="nav-item" data-screen="reports"><span class="icon">📈</span><span>Reports</span></button>
+      <div class="nav-section-label" style="margin-top:12px">AI Advisor</div>
+      <button class="nav-item" data-screen="chat"><span class="icon">🤖</span><span>AI Spending Advisor</span></button>
       <div class="nav-section-label" style="margin-top:12px">Account</div>
       <button class="nav-item" data-screen="profile"><span class="icon">👤</span><span>Profile</span></button>
     </nav>
@@ -270,85 +266,8 @@
       </div>
 
       <!-- ===== PREDICTIONS ===== -->
-      <div class="screen" id="screen-predictions">
-        <div class="alert alert-info" style="margin-bottom:20px">
-          🔮 <div><strong>AI Prediction Engine</strong> — Predictions use linear regression on your past spending. Accuracy improves with more months of history.</div>
-        </div>
-        <div id="pred-data-warn"></div>
-        <div class="stat-grid" style="grid-template-columns:repeat(3,1fr);margin-bottom:24px">
-          <div class="stat-card pink">
-            <div class="stat-label">Predicted Total (Next Month)</div>
-            <div class="stat-value pink" id="pred-total">₦—</div>
-            <div class="stat-sub" id="pred-vs-budget">vs. current budget</div>
-          </div>
-          <div class="stat-card teal">
-            <div class="stat-label">Prediction Confidence</div>
-            <div class="stat-value teal" id="pred-confidence">—%</div>
-            <div class="stat-sub">Based on months of data</div>
-          </div>
-          <div class="stat-card purple">
-            <div class="stat-label">Biggest Risk Category</div>
-            <div class="stat-value purple" id="pred-risk">—</div>
-            <div class="stat-sub" id="pred-risk-amt">—</div>
-          </div>
-        </div>
-        <div class="pred-grid" id="pred-grid"></div>
-        <div class="card" style="margin-top:24px">
-          <div class="card-header"><span class="card-title">Spending Forecast — Next 3 Months</span></div>
-          <div class="chart-wrap"><canvas id="forecastChart"></canvas></div>
-        </div>
-      </div>
-
       <!-- ===== ADVICE ===== -->
-      <div class="screen" id="screen-advice">
-        <div class="advice-header">
-          <div>
-            <div class="section-title">Personalized Financial Advice</div>
-            <div class="section-sub">Generated from your spending patterns and financial health</div>
-          </div>
-          <button class="btn btn-ghost btn-sm" id="refreshAdviceBtn">↻ Refresh</button>
-        </div>
-        <div class="advice-grid" id="advice-grid"></div>
-        <div class="card" style="margin-top:20px">
-          <div class="card-header"><span class="card-title">Your Spending DNA</span></div>
-          <div class="chart-wrap"><canvas id="spendingRadar"></canvas></div>
-        </div>
-      </div>
-
       <!-- ===== REPORTS ===== -->
-      <div class="screen" id="screen-reports">
-        <div class="tabs">
-          <button class="tab-btn active" data-tab="overview">Overview</button>
-          <button class="tab-btn" data-tab="monthly">Monthly Trend</button>
-          <button class="tab-btn" data-tab="categories">By Category</button>
-        </div>
-        <div class="tab-content active" id="tab-overview">
-          <div class="stat-grid" style="grid-template-columns:repeat(3,1fr);margin-bottom:24px" id="report-stats"></div>
-          <div class="grid-2">
-            <div class="card">
-              <div class="card-header"><span class="card-title">Income vs Expenses</span></div>
-              <div class="chart-wrap"><canvas id="incomeExpenseChart"></canvas></div>
-            </div>
-            <div class="card">
-              <div class="card-header"><span class="card-title">Spending Distribution</span></div>
-              <div class="chart-wrap"><canvas id="reportPieChart"></canvas></div>
-            </div>
-          </div>
-        </div>
-        <div class="tab-content" id="tab-monthly">
-          <div class="card">
-            <div class="card-header"><span class="card-title">Monthly Spending Trend</span></div>
-            <div class="chart-wrap" style="height:280px"><canvas id="monthlyTrendChart"></canvas></div>
-          </div>
-        </div>
-        <div class="tab-content" id="tab-categories">
-          <div class="card">
-            <div class="card-header"><span class="card-title">Category Breakdown</span></div>
-            <div id="cat-breakdown-list"></div>
-          </div>
-        </div>
-      </div>
-
       <!-- ===== PROFILE ===== -->
       <div class="screen" id="screen-profile">
         <div class="grid-2">
@@ -407,42 +326,43 @@
       <div class="screen" id="screen-chat">
         <div class="chat-shell">
 
-          <!-- Sidebar: quick actions -->
+          <!-- Sidebar -->
           <aside class="chat-sidebar">
-            <div class="chat-sidebar-title">Quick Ask</div>
-
+            <div class="chat-sidebar-title">💬 Quick Prompts</div>
             <div class="quick-prompts">
-              <button class="quick-btn" data-prompt="Based on my remaining feeding budget, exactly how much can I spend on food today and for each remaining day this month?">
-                🍽️ My daily food budget
+              <button class="quick-btn" data-prompt="I spent ₦X on food and ₦Y on transport this week — analyze my spending and tell me where to cut costs.">
+                📝 Log my spending
               </button>
-              <button class="quick-btn" data-prompt="Looking at the food prices I have set, what is the cheapest combination of breakfast, lunch and dinner I can have today and still eat well?">
-                💰 Cheapest full day
+              <button class="quick-btn" data-prompt="Analyze my spending this month and tell me where I can save money.">
+                📊 Analyze my spending
               </button>
-              <button class="quick-btn" data-prompt="Create a 5-day meal plan for me using only the food items in my price list. Show the price of each meal and the daily total. Stay within my daily feeding allowance.">
-                📅 5-day meal plan
+              <button class="quick-btn" data-prompt="Give me a 7-day healthy meal plan that fits my remaining feeding budget. Include breakfast, lunch, and dinner each day.">
+                🥗 7-day healthy food plan
               </button>
-              <button class="quick-btn" data-prompt="Compare all the lunch options in my food price list from cheapest to most expensive. Which gives the best value for money?">
-                ⚖️ Compare lunch options
+              <button class="quick-btn" data-prompt="How much can I spend on food each day for the rest of this month?">
+                💰 Daily food budget
               </button>
-              <button class="quick-btn" data-prompt="Which of my spending categories is most over budget this month? Give me specific advice on what to cut.">
+              <button class="quick-btn" data-prompt="Which of my spending categories is most over budget? What should I cut?">
                 ✂️ Where to cut costs
               </button>
-              <button class="quick-btn" data-prompt="I only have ₦2000 left for food this week. Using only items in my price list, what should I eat each day to make it last?">
-                📊 Stretch ₦2000
-              </button>
-              <button class="quick-btn" data-prompt="What are all the breakfast options in my food price list? Which is most filling for the price?">
-                🥖 Breakfast options
-              </button>
-              <button class="quick-btn" data-prompt="What is my financial health score this month and what is the single most impactful change I can make this week?">
-                ❤️ Financial health
+              <button class="quick-btn" data-prompt="What is the cheapest healthy combination of breakfast, lunch and dinner I can get today on campus?">
+                🍽️ Cheapest healthy day
               </button>
             </div>
 
-            <div class="chat-sidebar-title" style="margin-top:20px">AI Tip of the Day</div>
+            <div class="chat-sidebar-title" style="margin-top:20px">💡 AI Tip of the Day</div>
             <div class="tip-card" id="quickTipCard">
               <div class="tip-loading">
                 <div class="tip-spinner"></div>
                 <span>Loading tip…</span>
+              </div>
+            </div>
+
+            <!-- Email Reminders Panel -->
+            <div style="margin-top:20px">
+              <div id="emailReminderPanel" class="email-reminder-panel">
+                <div class="erp-title">📧 Email Reminders</div>
+                <div class="erp-note">Loading…</div>
               </div>
             </div>
 
@@ -454,7 +374,7 @@
           <!-- Main chat area -->
           <div class="chat-main">
             <div class="chat-messages" id="chatMessages">
-              <!-- Welcome message injected by JS -->
+              <!-- Welcome injected by JS -->
             </div>
 
             <div class="chat-input-area">
@@ -462,7 +382,7 @@
                 <textarea
                   id="chatInput"
                   class="chat-input"
-                  placeholder="Ask about food prices, budgeting tips, meal plans…"
+                  placeholder="Tell me what you spent (e.g. ₦3000 on food, ₦1500 on transport) or ask anything…"
                   rows="1"
                 ></textarea>
                 <button class="chat-send-btn" id="chatSendBtn" title="Send">
@@ -470,7 +390,7 @@
                 </button>
               </div>
               <div class="chat-footer-note">
-                Powered by Groq · Llama 3.3 70B · Knows your live budget data
+                IBEPS-AI · Groq Llama 3.3 · Knows your live budget &amp; campus food prices
               </div>
             </div>
           </div>
@@ -479,31 +399,6 @@
 
 
       <!-- ===== FOOD PRICES ===== -->
-      <div class="screen" id="screen-foodprices">
-
-        <div class="fp-toolbar">
-          <div class="fp-filter-tabs" id="fpFilterTabs">
-            <button class="fp-tab active" data-cat="all">All</button>
-            <button class="fp-tab" data-cat="breakfast">🥖 Breakfast</button>
-            <button class="fp-tab" data-cat="lunch">🍚 Lunch</button>
-            <button class="fp-tab" data-cat="dinner">🌙 Dinner</button>
-            <button class="fp-tab" data-cat="snacks">🍪 Snacks</button>
-            <button class="fp-tab" data-cat="drinks">🥤 Drinks</button>
-          </div>
-          <div class="fp-actions">
-            <button class="btn btn-ghost btn-sm" id="fpResetBtn">↺ Reset to defaults</button>
-            <button class="btn btn-gold btn-sm" id="fpAddBtn">＋ Add Item</button>
-          </div>
-        </div>
-
-        <!-- Summary bar -->
-        <div class="fp-summary" id="fpSummary"></div>
-
-        <!-- Price grid -->
-        <div class="fp-grid" id="fpGrid"></div>
-
-      </div>
-
     </div><!-- /content-area -->
   </div><!-- /main-content -->
 </div><!-- /app-shell -->
@@ -625,8 +520,8 @@
     <button class="mobile-nav-btn" data-screen="chat">
       <span class="m-icon">🤖</span><span>AI</span>
     </button>
-    <button class="mobile-nav-btn" data-screen="foodprices">
-      <span class="m-icon">🍽️</span><span>Prices</span>
+    <button class="mobile-nav-btn" data-screen="budget">
+      <span class="m-icon">🗂️</span><span>Budget</span>
     </button>
     <button class="mobile-nav-btn" data-screen="profile">
       <span class="m-icon">👤</span><span>Profile</span>

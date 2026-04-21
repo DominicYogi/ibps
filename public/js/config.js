@@ -25,12 +25,8 @@ const SCREEN_META = {
   dashboard:   { title: 'Dashboard',                sub: 'Your financial overview' },
   tracker:     { title: 'Transactions',             sub: 'All income and expenses' },
   budget:      { title: 'Budget Setup',             sub: 'Allocate your monthly budget' },
-  predictions: { title: 'AI Predictions',           sub: 'Forecast your future spending' },
-  advice:      { title: 'Smart Advice',             sub: 'Personalised financial guidance' },
-  reports:     { title: 'Reports & Analytics',      sub: 'Visualise your financial data' },
   profile:     { title: 'Profile',                  sub: 'Your account settings' },
-  chat:        { title: 'AI Chat',                   sub: 'Groq Llama — your budget-aware financial advisor' },
-  foodprices:  { title: 'Food Prices',               sub: 'Set campus food prices — used by AI for accurate meal planning' },
+  chat:        { title: 'AI Spending Advisor',       sub: 'Tell me what you spent — I will analyze it and build your food plan' },
 };
 
 function getCatMeta(id) {
