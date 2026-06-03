@@ -13,8 +13,11 @@ const FP_CAT_META = {
   dinner:    { label: 'Dinner',    emoji: '🌙' },
   snacks:    { label: 'Snacks',    emoji: '🍪' },
   drinks:    { label: 'Drinks',    emoji: '🥤' },
+  transport: { label: 'Transport', emoji: '🚌' },
+  services:  { label: 'Services',  emoji: '🖨️' },
+  other:     { label: 'Other',     emoji: '📦' },
 };
-const FP_CAT_ORDER = ['breakfast', 'lunch', 'dinner', 'snacks', 'drinks'];
+const FP_CAT_ORDER = ['breakfast', 'lunch', 'dinner', 'snacks', 'drinks', 'transport', 'services', 'other'];
 
 // ── Entry point ─────────────────────────────────────────────
 async function renderFoodPricesScreen() {

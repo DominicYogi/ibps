@@ -18,11 +18,12 @@ function showScreen(name) {
 
   // Render screen content
   const renderers = {
-    dashboard:   renderDashboard,
-    tracker:     renderTrackerScreen,
-    budget:      renderBudgetScreen,
-    profile:     renderProfileScreen,
-    chat:        renderChatScreen,
+    dashboard:     renderDashboard,
+    tracker:       renderTrackerScreen,
+    budget:        renderBudgetScreen,
+    profile:       renderProfileScreen,
+    chat:          renderChatScreen,
+    'food-prices': renderFoodPricesScreen,
   };
   if (renderers[name]) renderers[name]();
 }

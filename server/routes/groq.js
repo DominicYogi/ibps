@@ -14,6 +14,19 @@ const EXPENSE_CATEGORIES = [
   { id: 'misc',          name: 'Miscellaneous'     },
 ];
 const FOOD_CATEGORY_ORDER = ['breakfast', 'lunch', 'dinner', 'snacks', 'drinks'];
+const ALL_CATEGORY_ORDER  = ['breakfast', 'lunch', 'dinner', 'snacks', 'drinks', 'transport', 'services', 'other'];
+const NON_FOOD_CATEGORIES = ['transport', 'services', 'other'];
+
+const CAT_META = {
+  breakfast: 'Breakfast',
+  lunch:     'Lunch',
+  dinner:    'Dinner',
+  snacks:    'Snacks',
+  drinks:    'Drinks',
+  transport: 'Transport',
+  services:  'Services (printing, laundry, etc.)',
+  other:     'Other Items',
+};
 
 function getGroq() {
   if (!process.env.GROQ_API_KEY) throw new Error('GROQ_API_KEY is not set in .env');
@@ -44,7 +57,7 @@ async function buildSystemPrompt(userId, month) {
   const foodPrices = await FoodPrice.find({});
 
   const grouped = {};
-  FOOD_CATEGORY_ORDER.forEach(c => { grouped[c] = []; });
+  ALL_CATEGORY_ORDER.forEach(c => { grouped[c] = []; });
   foodPrices.forEach(f => {
     const g = f.category.toLowerCase();
     if (!grouped[g]) grouped[g] = [];
@@ -54,7 +67,18 @@ async function buildSystemPrompt(userId, month) {
   const priceTable = FOOD_CATEGORY_ORDER
     .filter(c => grouped[c]?.length > 0)
     .map(cat => {
-      const header = cat.charAt(0).toUpperCase() + cat.slice(1);
+      const header = CAT_META[cat] || (cat.charAt(0).toUpperCase() + cat.slice(1));
+      const rows = grouped[cat]
+        .sort((a, b) => a.price - b.price)
+        .map(f => `    ${f.emoji} ${f.name.padEnd(32)} ${fmt(f.price)} per ${f.unit}`)
+        .join('\n');
+      return `  ${header}:\n${rows}`;
+    }).join('\n\n');
+
+  const nonFoodTable = NON_FOOD_CATEGORIES
+    .filter(c => grouped[c]?.length > 0)
+    .map(cat => {
+      const header = CAT_META[cat] || (cat.charAt(0).toUpperCase() + cat.slice(1));
       const rows = grouped[cat]
         .sort((a, b) => a.price - b.price)
         .map(f => `    ${f.emoji} ${f.name.padEnd(32)} ${fmt(f.price)} per ${f.unit}`)
@@ -123,6 +147,7 @@ CHEAPEST FULL DAY (breakfast + lunch + dinner):
   ${cheapLunch?.emoji||''} ${cheapLunch?.name||'N/A'}: ${fmt(cheapLunch?.price||0)}
   ${cheapDinner?.emoji||''} ${cheapDinner?.name||'N/A'}: ${fmt(cheapDinner?.price||0)}
   Total cheapest day: ${fmt(cheapDay)}
+${nonFoodTable ? `\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nOTHER CAMPUS PRICES  (Transport, Services, etc.)\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n${nonFoodTable}` : ''}
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 YOUR ROLE

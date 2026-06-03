@@ -22,6 +22,16 @@ const DEFAULT_PRICES = [
   { category:'drinks',    name:'Pure Water (sachet)',   price:50,   unit:'sachet',emoji:'💧' },
   { category:'drinks',    name:'Bottled Water (50cl)',  price:200,  unit:'bottle',emoji:'🍶' },
   { category:'drinks',    name:'Soft Drink (35cl)',     price:300,  unit:'bottle',emoji:'🥤' },
+  // Transport
+  { category:'transport', name:'Okada (short trip)',     price:200,  unit:'trip',  emoji:'🏍️' },
+  { category:'transport', name:'Okada (long trip)',      price:400,  unit:'trip',  emoji:'🏍️' },
+  { category:'transport', name:'Bus (town)',             price:150,  unit:'trip',  emoji:'🚌' },
+  { category:'transport', name:'Keke Napep (short)',     price:200,  unit:'trip',  emoji:'🛺' },
+  // Services
+  { category:'services',  name:'Photocopy (per page)',  price:20,   unit:'page',  emoji:'🖨️' },
+  { category:'services',  name:'Printing (per page)',   price:50,   unit:'page',  emoji:'🖨️' },
+  { category:'services',  name:'Laundry (per cloth)',   price:100,  unit:'piece', emoji:'👕' },
+  { category:'services',  name:'Barbing / Haircut',     price:500,  unit:'session',emoji:'✂️' },
 ];
 
 // GET /api/food-prices

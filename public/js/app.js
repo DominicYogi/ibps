@@ -76,6 +76,7 @@ async function initApp() {
   initTracker();
   initProfile();
   initChat();
+  initFoodPrices();
 
   // Update sidebar user info
   updateSidebar();

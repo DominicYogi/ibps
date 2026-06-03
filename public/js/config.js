@@ -22,11 +22,12 @@ const INCOME_CATEGORIES = [
 ];
 
 const SCREEN_META = {
-  dashboard:   { title: 'Dashboard',                sub: 'Your financial overview' },
-  tracker:     { title: 'Transactions',             sub: 'All income and expenses' },
-  budget:      { title: 'Budget Setup',             sub: 'Allocate your monthly budget' },
-  profile:     { title: 'Profile',                  sub: 'Your account settings' },
-  chat:        { title: 'AI Spending Advisor',       sub: 'Tell me what you spent — I will analyze it and build your food plan' },
+  dashboard:    { title: 'Dashboard',              sub: 'Your financial overview' },
+  tracker:      { title: 'Transactions',           sub: 'All income and expenses' },
+  budget:       { title: 'Budget Setup',           sub: 'Allocate your monthly budget' },
+  profile:      { title: 'Profile',               sub: 'Your account settings' },
+  chat:         { title: 'AI Spending Advisor',    sub: 'Tell me what you spent — I will analyze it and build your food plan' },
+  'food-prices':{ title: 'Price List',             sub: 'Custom prices the AI uses for advice and meal plans' },
 };
 
 function getCatMeta(id) {
