@@ -49,7 +49,7 @@ const FoodPriceSchema = new Schema({
   price:    { type: Number, required: true, min: 0 },
   unit:     { type: String, default: 'plate' },
   emoji:    { type: String, default: '🍽️' },
-}, { timestamps: true });
+}, { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } });
 
 module.exports = {
   User:        mongoose.models.User        || mongoose.model('User',        UserSchema),
